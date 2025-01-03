@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
     std::set<int> S = createRandomSet(n, lower_bound, upper_bound);
 
     DetSkipLists detSkipLists(S);
+    detSkipLists.print();
 
     return 0;
 }

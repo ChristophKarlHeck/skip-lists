@@ -12,6 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_executable(${PROJECT_NAME}
     src/main.cpp
     src/DetSkipLists.cpp
+    src/SkipListNode.cpp
     src/utils.cpp
 )
 
