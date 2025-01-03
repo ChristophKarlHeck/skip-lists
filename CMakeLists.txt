@@ -11,6 +11,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Add executable target
 add_executable(${PROJECT_NAME}
     src/main.cpp
+    src/DetSkipLists.cpp
+    src/utils.cpp
 )
 
 # Link libraries (if needed, update accordingly)
