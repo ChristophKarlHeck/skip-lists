@@ -83,22 +83,15 @@ void DetSkipLists::print() {
                     std::cout << std::setw(4) << nextNode->getValue();
                     current = nextNode; // Move to the next node
                 } else {
-                    std::cout << std::setw(4) << "---"; // Empty space for alignment
+                    std::cout << std::setw(4) << " "; // Empty space for alignment
                 }
-            } else {
-                // Column for an arrow
-                if (current && current->getNext()[level]) {
-                    std::cout << " ->";
-                } else {
-                    std::cout << "   "; // Empty space for alignment
-                }
-            }
-
+            } 
+            
             ++columnIndex;
         }
 
         // Add nullptr at the end of each level
-        std::cout << " -> nullptr" << std::endl;
+        std::cout << std::endl;
     }
 }
 
