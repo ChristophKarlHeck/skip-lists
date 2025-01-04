@@ -28,10 +28,12 @@ void DetSkipLists::BuildSkipLists(void) {
 
         int step = pow(2,level); // 2^level
 
+        // Make links to elements from head
         auto& nextVector = head.getNext();
         nextVector[level] = &nodes[step-1];
         head.setNext(nextVector);
 
+        // Start at first next element from head in respective level and add links for each node
         for (size_t i = step-1; i < nodes.size(); i += step) {
 
             if (i + step < nodes.size()) {
@@ -51,39 +53,30 @@ void DetSkipLists::BuildSkipLists(void) {
 }
 
 void DetSkipLists::print() {
-    // Collect all node values from level 0
-    std::vector<int> level0Positions;
-    SkipListNode* current = &head;
-    while (current) {
-        if (current != &head) { // Skip the dummy head node
-            level0Positions.push_back(current->getValue());
-        }
-        current = current->getNext()[0];
-    }
+    for (int level = numberOfLists; level >= 0; --level) {
+        std::cout << "Level " << level << ": -> ";
 
-    // Print each level
-    for (int level = numberOfLists - 1; level >= 0; --level) {
-        std::cout << "Level " << level << ": ";
-
-        current = &head; // Start from the head for each level
-        size_t positionIndex = 0;
-
+        SkipListNode* current = &head; // Start from the head for each level
         while (current) {
             // Move to the next node at the current level
             current = current->getNext()[level];
 
-            if (!current) break;
-
-            // Align the node's position to level 0
-            while (positionIndex < level0Positions.size() &&
-                   level0Positions[positionIndex] < current->getValue()) {
-                std::cout << std::setw(4) << " "; // Print spacing for alignment
-                ++positionIndex;
+            if (!current) {
+                if (numberOfLists!= level){
+                    std::cout << " -> " << nullptr;
+                }
+                else{
+                    std::cout << nullptr;
+                }
+                break;
             }
+            // Print the node's value and pointer
+            std::cout << current->getValue();
 
-            // Print the node's value
-            std::cout << std::setw(4) << current->getValue();
-            ++positionIndex;
+            // Print an arrow if there is another node
+            if (current->getNext()[level]) {
+                std::cout << " -> ";
+            }
         }
 
         std::cout << std::endl;
