@@ -111,13 +111,13 @@ bool DetSkipLists::find(int x){
     // Stop if element was found or if stuck in list 0.
 
     SkipListNode* current_node = &head;
-    for (int level = numberOfLists; level > 0; --level) {
+    for (int level = numberOfLists; level >= 0; level--) {
         if(current_node->getNext()[level] == nullptr || current_node->getNext()[level]->getValue() > x){
-            std::cout << "level down: "<< level << "to" << level-1 << std::endl;
+            std::cout << "level down: "<< level << std::endl;
             continue;
         }
         else{
-            std::cout << "next element" << std::endl;
+            std::cout << "next element in level: " << level << std::endl;
             if (current_node->getNext()[level]->getValue() == x){
                 return true;
             }

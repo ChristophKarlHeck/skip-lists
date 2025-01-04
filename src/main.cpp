@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 
     DetSkipLists detSkipLists(S);
     detSkipLists.print();
-    bool result = detSkipLists.find(22);
+    bool result = detSkipLists.find(19);
     std::cout << "Found: "<< result << std::endl;
 
     return 0;
