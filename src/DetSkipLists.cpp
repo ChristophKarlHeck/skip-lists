@@ -53,35 +53,55 @@ void DetSkipLists::BuildSkipLists(void) {
 }
 
 void DetSkipLists::print() {
+    // Collect all node values from Level 0
+    std::vector<int> level0Positions;
+    SkipListNode* current = &head;
+    while (current) {
+        current = current->getNext()[0];
+        if (current) {
+            level0Positions.push_back(current->getValue());
+        }
+    }
+
+    // Calculate the total number of columns (2 per node: value + arrow)
+    size_t totalColumns = level0Positions.size() * 2;
+
+    // Print each level
     for (int level = numberOfLists; level >= 0; --level) {
-        std::cout << "Level " << level << ": -> ";
+        std::cout << "Level " << level << ": ";
 
-        SkipListNode* current = &head; // Start from the head for each level
-        while (current) {
-            // Move to the next node at the current level
-            current = current->getNext()[level];
+        current = &head; // Start from the head for each level
+        size_t columnIndex = 0;
 
-            if (!current) {
-                if (numberOfLists!= level){
-                    std::cout << " -> " << nullptr;
+        while (columnIndex < totalColumns) {
+            // Determine if this column should contain a value or an arrow
+            if (columnIndex % 2 == 0) {
+                // Column for a value
+                SkipListNode* nextNode = current ? current->getNext()[level] : nullptr;
+
+                if (nextNode && nextNode->getValue() == level0Positions[columnIndex / 2]) {
+                    std::cout << std::setw(4) << nextNode->getValue();
+                    current = nextNode; // Move to the next node
+                } else {
+                    std::cout << std::setw(4) << "---"; // Empty space for alignment
                 }
-                else{
-                    std::cout << nullptr;
+            } else {
+                // Column for an arrow
+                if (current && current->getNext()[level]) {
+                    std::cout << " ->";
+                } else {
+                    std::cout << "   "; // Empty space for alignment
                 }
-                break;
             }
-            // Print the node's value and pointer
-            std::cout << current->getValue();
 
-            // Print an arrow if there is another node
-            if (current->getNext()[level]) {
-                std::cout << " -> ";
-            }
+            ++columnIndex;
         }
 
-        std::cout << std::endl;
+        // Add nullptr at the end of each level
+        std::cout << " -> nullptr" << std::endl;
     }
 }
+
 
 
 DetSkipLists::DetSkipLists(std::set<int> S):
