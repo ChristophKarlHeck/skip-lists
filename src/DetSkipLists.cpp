@@ -23,12 +23,16 @@ void DetSkipLists::BuildSkipLists(void) {
         nodes.push_back(SkipListNode(value, numberOfLists));
     }
 
-    // Build the levels
-    for (int level = 0; level < numberOfLists; ++level) {
+    // Build SkipLists
+    for (int level = 0; level < numberOfLists; level++) {
 
         int step = pow(2,level); // 2^level
 
-        for (size_t i = 0; i < nodes.size(); i += step) {
+        auto& nextVector = head.getNext();
+        nextVector[level] = &nodes[step-1];
+        head.setNext(nextVector);
+
+        for (size_t i = step-1; i < nodes.size(); i += step) {
 
             if (i + step < nodes.size()) {
 
@@ -44,35 +48,42 @@ void DetSkipLists::BuildSkipLists(void) {
         }
     }
 
-    // Connect head to the first node
-    for (int level = 0; level < numberOfLists; ++level) {
-        if (!nodes.empty()) {
-            // Get the next vector of the head node
-            auto& headNext = head.getNext();
-
-            // Set the next pointer at the current level to the first node in the list
-            headNext[level] = &nodes[0];
-
-            // Update the head's next vector
-            head.setNext(headNext);
-        }
-    }
 }
 
 void DetSkipLists::print() {
-    std::cout << "Skip List Levels:\n";
+    // Collect all node values from level 0
+    std::vector<int> level0Positions;
+    SkipListNode* current = &head;
+    while (current) {
+        if (current != &head) { // Skip the dummy head node
+            level0Positions.push_back(current->getValue());
+        }
+        current = current->getNext()[0];
+    }
 
+    // Print each level
     for (int level = numberOfLists - 1; level >= 0; --level) {
         std::cout << "Level " << level << ": ";
 
-        SkipListNode* current = &head; // Start from the head node
+        current = &head; // Start from the head for each level
+        size_t positionIndex = 0;
+
         while (current) {
-            if (current != &head) { // Skip printing the dummy head's value
-                std::cout << std::setw(3) << current->getValue() << " ";
+            // Move to the next node at the current level
+            current = current->getNext()[level];
+
+            if (!current) break;
+
+            // Align the node's position to level 0
+            while (positionIndex < level0Positions.size() &&
+                   level0Positions[positionIndex] < current->getValue()) {
+                std::cout << std::setw(4) << " "; // Print spacing for alignment
+                ++positionIndex;
             }
 
-            // Access the next vector directly
-            current = current->getNext()[level];
+            // Print the node's value
+            std::cout << std::setw(4) << current->getValue();
+            ++positionIndex;
         }
 
         std::cout << std::endl;
@@ -82,9 +93,9 @@ void DetSkipLists::print() {
 
 DetSkipLists::DetSkipLists(std::set<int> S):
     elements(S),
-    head(SkipListNode(-1, CalculateNumberOfLists(S.size()))),
+    head(SkipListNode(-1, CalculateNumberOfLists(S.size()) + 1)),
     nodes(),
-    numberOfLists(CalculateNumberOfLists(S.size()))
+    numberOfLists(CalculateNumberOfLists(S.size() + 1))
 {
     BuildSkipLists();            
 }
