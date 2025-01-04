@@ -113,7 +113,7 @@ bool DetSkipLists::find(int x){
     SkipListNode* current_node = &head;
     for (int level = numberOfLists; level >= 0; level--) {
         if(current_node->getNext()[level] == nullptr || current_node->getNext()[level]->getValue() > x){
-            std::cout << "level down: "<< level << std::endl;
+            std::cout << "down from level: "<< level << std::endl;
             continue;
         }
         else{
