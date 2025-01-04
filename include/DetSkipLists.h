@@ -11,7 +11,9 @@ class DetSkipLists{
     public:
         DetSkipLists(std::set<int> S);
 
-        void print();
+        void print(void);
+        bool find(int x);
+        void insert(int x);
 
     private:
         std::set<int> elements;

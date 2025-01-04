@@ -52,7 +52,16 @@ void DetSkipLists::BuildSkipLists(void) {
 
 }
 
-void DetSkipLists::print() {
+DetSkipLists::DetSkipLists(std::set<int> S):
+    elements(S),
+    head(SkipListNode(-1, CalculateNumberOfLists(S.size()) + 1)),
+    nodes(),
+    numberOfLists(CalculateNumberOfLists(S.size() + 1))
+{
+    BuildSkipLists();            
+}
+
+void DetSkipLists::print(void) {
     // Collect all node values from Level 0
     std::vector<int> level0Positions;
     SkipListNode* current = &head;
@@ -95,13 +104,27 @@ void DetSkipLists::print() {
     }
 }
 
+bool DetSkipLists::find(int x){
+    // Start in highest list.
+    // If next element in current list is > x. go one list down
+    // Otherwise go to the next element
+    // Stop if element was found or if stuck in list 0.
 
+    SkipListNode* current_node = &head;
+    for (int level = numberOfLists; level > 0; --level) {
+        if(current_node->getNext()[level] == nullptr || current_node->getNext()[level]->getValue() > x){
+            std::cout << "level down: "<< level << "to" << level-1 << std::endl;
+            continue;
+        }
+        else{
+            std::cout << "next element" << std::endl;
+            if (current_node->getNext()[level]->getValue() == x){
+                return true;
+            }
+            current_node = current_node->getNext()[level];
+            level++;
+        }
+    }
 
-DetSkipLists::DetSkipLists(std::set<int> S):
-    elements(S),
-    head(SkipListNode(-1, CalculateNumberOfLists(S.size()) + 1)),
-    nodes(),
-    numberOfLists(CalculateNumberOfLists(S.size() + 1))
-{
-    BuildSkipLists();            
+    return false;
 }

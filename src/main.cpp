@@ -20,11 +20,13 @@ int main(int argc, char *argv[])
 
     // Create the random set
     int lower_bound = 1;
-    int upper_bound = 100;
+    int upper_bound = 20;
     std::set<int> S = createRandomSet(n, lower_bound, upper_bound);
 
     DetSkipLists detSkipLists(S);
     detSkipLists.print();
+    bool result = detSkipLists.find(22);
+    std::cout << "Found: "<< result << std::endl;
 
     return 0;
 }
