@@ -1,6 +1,7 @@
 #include <cmath> // For std::log
 #include <iostream>
 #include <iomanip> // For std::setw
+#include <algorithm> // For std::lower_bound
 
 #include "DetSkipLists.h"
 
@@ -58,6 +59,7 @@ DetSkipLists::DetSkipLists(std::set<int> S):
     nodes(),
     numberOfLists(CalculateNumberOfLists(S.size() + 1))
 {
+    std::cout << "NumberOfLists: "<< numberOfLists << std::endl;
     BuildSkipLists();            
 }
 
@@ -76,7 +78,8 @@ void DetSkipLists::print(void) {
     size_t totalColumns = level0Positions.size() * 2;
 
     // Print each level
-    for (int level = numberOfLists; level >= 0; --level) {
+    std::cout << "Level " << numberOfLists << ": " << std::endl;
+    for (int level = numberOfLists - 1; level >= 0; --level) {
         std::cout << "Level " << level << ": ";
 
         current = &head; // Start from the head for each level
@@ -138,51 +141,105 @@ bool DetSkipLists::insert(int x){
 
     // maintain elements for quick checks
     elements.insert(x);
-    
-    // Insert node in vector
+
+    // calculate the new number of lists needed
+    numberOfLists = CalculateNumberOfLists(elements.size() + 1);
+
+    nodes.clear();
+
+    // I have to call buildSkip Lists, since when we need a new level, we need a new list, we need to rebuild entire list   
+    BuildSkipLists();
+
+
     // Find the position where x should be inserted to keep vector sorted
-    auto it = std::lower_bound(nodes.begin(), nodes.end(), x);
-    // Insert x at the found position
-    nodes.insert(it, SkipListNode(x, numberOfLists));
-    // convert iterator to index
-    int position = std::distance(nodes.begin(), it);
+    // auto it = std::lower_bound(
+    //     nodes.begin(), 
+    //     nodes.end(), 
+    //     x,
+    //     [](const SkipListNode& node, int value) {
+    //         return node.getValue() < value; // Custom comparison
+    //     });
+
+    // // Convert iterator to index
+    // int position = std::distance(nodes.begin(), it);
+    // // Extend vector by 1 Node
+    // nodes.push_back(SkipListNode(0, numberOfLists));
+
+    // // Move values to the right
+    // int iterator = nodes.size();
+    // while(iterator > position){
+    //     nodes[iterator].setValue(nodes[iterator-1].getValue());
+    //     iterator--;
+    // }
+    // // Insert new value
+    // nodes[position].setValue(x);
+
+    //Make connection wiith last element. But what happens, when we need a new list?
+    // Then everything has to be rebuilt;
+
+        // Connect last node with SkipList
+
+    // Move all values to the right
+    // int level = 0;
+    // for (size_t i = nodes.size(); i >= 0; i--) {
+
+    //     if (i + 1 < nodes.size()) {
+                
+    //         int value = nodes[i].getValue();
+    //         nodes[i+1].setValue(value);
+                
+    //     }
+    // }
 
     // Rearrange the entire SkipLists DT
-    int level = 0;
-    SkipListNode* previous_node = &head;
-    SkipListNode* current_node = previous_node->getNext()[level];
-    SkipListNode* next_node = current_node->getNext()[level];
+    // int level = 0;
+    // SkipListNode* previous_node = &head;
+    // SkipListNode* current_node = previous_node->getNext()[level];
+    // SkipListNode* next_node = current_node->getNext()[level];
 
-    // Get the new node and its environment nodes
-    while(current_node->getValue() != x){
-        previous_node = current_node;
-        current_node = next_node;
-        next_node = next_node->getNext()[level];
-    }
+    // // Get the new node and its environment nodes
+    // while(current_node->getValue() != x){
+    //     previous_node = current_node;
+    //     current_node = next_node;
+    //     next_node = next_node->getNext()[level];
+    // }
 
     // move all next_vectors to the left
-    while(next_node == nullptr){
-        current_node->setNext(next_node->getNext());
-        current_node = next_node;
-        next_node = next_node->getNext()[level];
-    }
+    // while(next_node != nullptr){
+    //     current_node->setNext(next_node->getNext());
+    //     current_node = next_node;
+    //     next_node = next_node->getNext()[level];
+    // }
 
-    // get number of lists last element should be integrated
-    int nbr_levels = 0;
-    for(int i=0; i < numberOfLists; i++){
-        int result = pow(2,i); // 2^level
-        if(result % position == 0){
-            nbr_levels++;
-        }
-    }
-    std::vector<SkipListNode*> new_vector(nbr_levels, nullptr);
+
+    //std::vector<SkipListNode*> new_vector(nbr_levels, nullptr);
     // build vector for last element 
-    current_node->setNext(new_vector);
+    //current_node->setNext(new_vector);
 
     // repoint head
 
-
-
     return true;
+}
+
+bool DetSkipLists::del(int x){
+
+    if(elements.find(x) == elements.end()){
+        // Check if x is not in list
+        return false;
+    }
+
+    // maintain elements for quick checks
+    elements.erase(x);
+
+    numberOfLists = CalculateNumberOfLists(elements.size() + 1);
+
+    nodes.clear();
+
+    BuildSkipLists();
 
 }
+
+
+
+
+

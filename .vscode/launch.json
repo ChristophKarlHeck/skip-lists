@@ -9,7 +9,7 @@
                 "type": "cppdbg",
                 "request": "launch",
                 "program": "${workspaceFolder}/build/SkipLists",
-                "args": ["13"],
+                "args": ["16"],
                 "stopAtEntry": false,
                 "cwd": "${workspaceFolder}/build",
                 "environment": [],

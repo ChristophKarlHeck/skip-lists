@@ -14,6 +14,7 @@ class DetSkipLists{
         void print(void);
         bool find(int x);
         bool insert(int x);
+        bool del(int x);
 
     private:
         std::set<int> elements;
