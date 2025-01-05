@@ -128,3 +128,61 @@ bool DetSkipLists::find(int x){
 
     return false;
 }
+
+bool DetSkipLists::insert(int x){
+    
+    if(elements.find(x) != elements.end()){
+        // Check if x is already in list
+        return false;
+    }
+
+    // maintain elements for quick checks
+    elements.insert(x);
+    
+    // Insert node in vector
+    // Find the position where x should be inserted to keep vector sorted
+    auto it = std::lower_bound(nodes.begin(), nodes.end(), x);
+    // Insert x at the found position
+    nodes.insert(it, SkipListNode(x, numberOfLists));
+    // convert iterator to index
+    int position = std::distance(nodes.begin(), it);
+
+    // Rearrange the entire SkipLists DT
+    int level = 0;
+    SkipListNode* previous_node = &head;
+    SkipListNode* current_node = previous_node->getNext()[level];
+    SkipListNode* next_node = current_node->getNext()[level];
+
+    // Get the new node and its environment nodes
+    while(current_node->getValue() != x){
+        previous_node = current_node;
+        current_node = next_node;
+        next_node = next_node->getNext()[level];
+    }
+
+    // move all next_vectors to the left
+    while(next_node == nullptr){
+        current_node->setNext(next_node->getNext());
+        current_node = next_node;
+        next_node = next_node->getNext()[level];
+    }
+
+    // get number of lists last element should be integrated
+    int nbr_levels = 0;
+    for(int i=0; i < numberOfLists; i++){
+        int result = pow(2,i); // 2^level
+        if(result % position == 0){
+            nbr_levels++;
+        }
+    }
+    std::vector<SkipListNode*> new_vector(nbr_levels, nullptr);
+    // build vector for last element 
+    current_node->setNext(new_vector);
+
+    // repoint head
+
+
+
+    return true;
+
+}

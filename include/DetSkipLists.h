@@ -13,7 +13,7 @@ class DetSkipLists{
 
         void print(void);
         bool find(int x);
-        void insert(int x);
+        bool insert(int x);
 
     private:
         std::set<int> elements;
