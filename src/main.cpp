@@ -1,6 +1,7 @@
 #include <set>
 
 #include "DetSkipLists.h"
+#include "RandSkipLists.h"
 #include "utils.h"
 
 int main(int argc, char *argv[])
@@ -23,22 +24,8 @@ int main(int argc, char *argv[])
     int upper_bound = 100;
     std::set<int> S = createRandomSet(n, lower_bound, upper_bound);
 
-    DetSkipLists detSkipLists(S);
-    detSkipLists.print();
-    bool result = detSkipLists.insert(5);
-    detSkipLists.print();
-    detSkipLists.insert(56);
-    detSkipLists.print();
-    detSkipLists.insert(6);
-    detSkipLists.insert(7);
-    // std::cout << "Inserted: "<< result << std::endl;
-    detSkipLists.print();
-    detSkipLists.del(7);
-    detSkipLists.print();
-    detSkipLists.del(56);
-    detSkipLists.print();
-    detSkipLists.del(6);
-    detSkipLists.print();
+    RandSkipLists RandSipLists(S);
+    RandSipLists.print();
 
     return 0;
 }

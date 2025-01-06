@@ -23,6 +23,7 @@ class RandSkipLists{
         std::vector<SkipListNode> nodes;
         std::mt19937 gen; // Random number generator
         std::uniform_int_distribution<> dist; // Distribution for coin flips
+        int max_level;
 
         bool flipCoin(void);
         void BuildSkipLists(void);
