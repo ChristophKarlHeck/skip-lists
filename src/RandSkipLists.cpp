@@ -36,7 +36,7 @@ void RandSkipLists::BuildSkipLists(void){
         // Do it level by levl
         for(int i = 0; i < nodes.size(); i++){
 
-            if(nodes[i].getNext().size() == level + 1){
+            if(nodes[i].getNext().size() >= level + 1){
                 auto& nextVector = previous_node->getNext();
                 nextVector[level] = &nodes[i];
                 previous_node->setNext(nextVector);
@@ -107,4 +107,30 @@ void RandSkipLists::print(void){
         std::cout << std::endl;
     }
 
+}
+
+bool RandSkipLists::find(int x){
+    // Start in highest list.
+    // If next element in current list is > x. go one list down
+    // Otherwise go to the next element
+    // Stop if element was found or if stuck in list 0.
+
+    SkipListNode* current_node = &head;
+    std::cout << "down from level: "<< max_level << std::endl;
+    for (int level = max_level -1; level >= 0; level--) {
+        if(current_node->getNext()[level] == nullptr || current_node->getNext()[level]->getValue() > x){
+            std::cout << "down from level: "<< level << std::endl;
+            continue;
+        }
+        else{
+            std::cout << "next element in level: " << level << std::endl;
+            if (current_node->getNext()[level]->getValue() == x){
+                return true;
+            }
+            current_node = current_node->getNext()[level];
+            level++;
+        }
+    }
+
+    return false;
 }

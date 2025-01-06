@@ -237,6 +237,8 @@ bool DetSkipLists::del(int x){
 
     BuildSkipLists();
 
+    return true;
+
 }
 
 
