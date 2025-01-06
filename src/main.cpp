@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     int upper_bound = 20;
     std::set<int> S = createRandomSet(n, lower_bound, upper_bound);
 
-    DetSkipLists RandSipLists(S);
+    RandSkipLists RandSipLists(S);
     RandSipLists.print();
     bool result = RandSipLists.find(5);
     std::cout << "Found: " << result << std::endl;
