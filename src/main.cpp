@@ -26,9 +26,10 @@ int main(int argc, char *argv[])
 
     RandSkipLists RandSipLists(S);
     RandSipLists.print();
-    bool result = RandSipLists.find(5);
-    std::cout << "Found: " << result << std::endl;
-    RandSipLists.findPredecessors(5);
+    RandSipLists.del(5);
+    RandSipLists.print();
+
+    //RandSipLists.findPredecessors(5);
 
     return 0;
 }
