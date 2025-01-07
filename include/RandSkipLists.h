@@ -25,7 +25,7 @@ class RandSkipLists{
         std::uniform_int_distribution<> dist; // Distribution for coin flips
         int max_level;
 
-        bool flipCoin(void);
+        int flipCoin(void);
         void BuildSkipLists(void);
 };
 

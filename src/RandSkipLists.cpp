@@ -4,8 +4,16 @@
 
 #include "RandSkipLists.h"
 
-bool RandSkipLists::flipCoin(void){
-    return dist(gen); // Directly return the random boolean
+int RandSkipLists::flipCoin(void){
+
+    int nbr_tails = 0;
+    while (true)
+    {   
+        nbr_tails++; // each node is at least in level 0. Therefore before flipCoin
+        // Directly return the random boolean
+        if(dist(gen)) return nbr_tails;
+    }
+    return -1; 
 }
 
 void RandSkipLists::BuildSkipLists(void){
@@ -15,13 +23,8 @@ void RandSkipLists::BuildSkipLists(void){
     // Let the number of additional lists the element appears in.
 
     for (auto value : elements) {
-        int nbr_tails = 0;
-        while (true)
-        {   
-            nbr_tails++; // each node is at least in level 0. Therefore before flipCoin
-            if(flipCoin()) break;
-        }
         
+        int nbr_tails = flipCoin();
         max_level = std::max(max_level, nbr_tails);
         nodes.push_back(SkipListNode(value, nbr_tails));
     }
@@ -133,4 +136,19 @@ bool RandSkipLists::find(int x){
     }
 
     return false;
+}
+
+bool RandSkipLists::insert(int x){
+    
+    if(elements.find(x) != elements.end()){
+        // Check if x is already in list
+        return false;
+    }
+
+    // maintain elements for quick checks
+    elements.insert(x); // O(log n)
+
+
+    return true;
+
 }
