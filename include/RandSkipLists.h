@@ -16,18 +16,18 @@ class RandSkipLists{
         SkipListNode* find(int x);
         bool insert(int x);
         bool del(int x);
-        std::vector<SkipListNode*> findPredecessors(int x);
 
     private:
         std::set<int> elements;
         SkipListNode head;
-        std::vector<SkipListNode> nodes;
+        std::vector<SkipListNode> nodes; // need to be removed
         std::mt19937 gen; // Random number generator
         std::uniform_int_distribution<> dist; // Distribution for coin flips
         int max_level;
 
         int flipCoin(void);
         void BuildSkipLists(void);
+        SkipListNode* getPredecessorOfRespectiveLevel(SkipListNode* node, int value, int level);
         
 };
 

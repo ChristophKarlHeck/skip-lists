@@ -140,23 +140,51 @@ SkipListNode* RandSkipLists::find(int x){
     return nullptr;
 }
 
+
+
 bool RandSkipLists::insert(int x){
     
-    if(elements.find(x) != elements.end()){
+    SkipListNode* insert_node = find(x); // O (log n)
         // Check if x is already in list
+        
+    if (insert_node != nullptr){
+        // Node does exist
         return false;
     }
 
-    // maintain elements for quick checks
-    elements.insert(x); // O(log n)
-
     int nbr_tails = flipCoin();
+    max_level = std::max(max_level, nbr_tails);
+
+    auto upper_bound = elements.upper_bound(x);
+    auto lower_bound = std::prev(upper_bound);
 
 
+    SkipListNode* successor_node = find(*upper_bound);
+    SkipListNode* predecessor_node = find(*lower_bound);
+    SkipListNode new_node = SkipListNode(x,nbr_tails);
 
+    auto vector_1 = predecessor_node->getNext();
+    vector_1[0] = &new_node;
+    predecessor_node->setNext(vector_1);
+    auto vector = new_node.getNext();
+    vector[0] = successor_node;
+    new_node.setNext(vector);
+
+    elements.insert(x);
 
     return true;
 
+}
+
+SkipListNode* RandSkipLists::getPredecessorOfRespectiveLevel(SkipListNode* node, int value, int level){
+    
+    // Get predecessor of respective level
+    while (node->getNext()[level]->getValue() != value)
+    {   
+        node = node->getNext()[level];   
+    }
+
+    return node;
 }
 
 bool RandSkipLists::del(int x){
@@ -174,17 +202,15 @@ bool RandSkipLists::del(int x){
     for(int level = del_node->getNext().size() - 1; level >= 0; level--){
         SkipListNode* current_node = &head;
 
-        // Get predecessor on respective level
-        while (current_node->getNext()[level]->getValue() != x)
-        {   
-            current_node = current_node->getNext()[level];   
-        }
+        current_node = getPredecessorOfRespectiveLevel(current_node,x,level);
 
         //  Redirect pointer on respective level           
         auto next_vector = current_node->getNext();
         next_vector[level] = del_node->getNext()[level];
         current_node->setNext(next_vector);       
     }
+
+    elements.erase(x);
 
     return true;
 }
