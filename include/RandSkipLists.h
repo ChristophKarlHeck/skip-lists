@@ -13,9 +13,10 @@ class RandSkipLists{
         RandSkipLists(std::set<int> S);
 
         void print(void);
-        bool find(int x);
+        SkipListNode* find(int x);
         bool insert(int x);
         bool del(int x);
+        std::vector<SkipListNode*> findPredecessors(int x);
 
     private:
         std::set<int> elements;
@@ -27,6 +28,7 @@ class RandSkipLists{
 
         int flipCoin(void);
         void BuildSkipLists(void);
+        
 };
 
 #endif // RAND_SKIP_LISTS_H

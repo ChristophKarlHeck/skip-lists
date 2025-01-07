@@ -112,13 +112,14 @@ void RandSkipLists::print(void){
 
 }
 
-bool RandSkipLists::find(int x){
+SkipListNode* RandSkipLists::find(int x){
     // Start in highest list.
     // If next element in current list is > x. go one list down
     // Otherwise go to the next element
     // Stop if element was found or if stuck in list 0.
 
     SkipListNode* current_node = &head;
+
     std::cout << "down from level: "<< max_level << std::endl;
     for (int level = max_level -1; level >= 0; level--) {
         if(current_node->getNext()[level] == nullptr || current_node->getNext()[level]->getValue() > x){
@@ -128,14 +129,43 @@ bool RandSkipLists::find(int x){
         else{
             std::cout << "next element in level: " << level << std::endl;
             if (current_node->getNext()[level]->getValue() == x){
-                return true;
+                return current_node->getNext()[level];
             }
             current_node = current_node->getNext()[level];
             level++;
         }
     }
 
-    return false;
+    return nullptr;
+}
+
+std::vector<SkipListNode*> RandSkipLists::findPredecessors(int x){
+    // Start in highest list.
+    // If next element in current list is > x. go one list down
+    // Otherwise go to the next element
+    // Stop if element was found or if stuck in list 0.
+
+    std::vector<SkipListNode*> predecessors;
+    SkipListNode* current_node = &head;
+
+    std::cout << "down from level: "<< max_level << std::endl;
+    for (int level = max_level -1; level >= 0; level--) {
+        if(current_node->getNext()[level] == nullptr || current_node->getNext()[level]->getValue() > x){
+            std::cout << "down from level: "<< level << std::endl;
+            continue;
+        }
+        else{
+            std::cout << "next element in level: " << level << std::endl;
+            if (current_node->getNext()[level]->getValue() == x){
+                std::cout << "Predecessor: "<< current_node->getValue() << std::endl;
+                predecessors.push_back(current_node);
+            }
+            current_node = current_node->getNext()[level];
+            level++;
+        }
+    }
+
+    return predecessors;
 }
 
 bool RandSkipLists::insert(int x){
@@ -148,7 +178,31 @@ bool RandSkipLists::insert(int x){
     // maintain elements for quick checks
     elements.insert(x); // O(log n)
 
+    int nbr_tails = flipCoin();
+
+
+
 
     return true;
 
+}
+
+bool RandSkipLists::del(int x){
+
+    SkipListNode* del_node = find(x); // O (log n)
+
+    if (del_node == nullptr){
+        // Node does not exist
+        return false;
+    }
+
+    auto next_vector = del_node->getNext();
+
+    // redirect pointers
+
+
+    // del SkipList node
+    delete del_node;
+
+    return true;
 }

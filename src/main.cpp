@@ -28,6 +28,7 @@ int main(int argc, char *argv[])
     RandSipLists.print();
     bool result = RandSipLists.find(5);
     std::cout << "Found: " << result << std::endl;
+    RandSipLists.findPredecessors(5);
 
     return 0;
 }
