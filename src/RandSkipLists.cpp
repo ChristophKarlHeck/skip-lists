@@ -203,22 +203,52 @@ bool RandSkipLists::insert(int x){
     }
 
     int nbr_tails = flipCoin();
-    max_level = std::max(max_level, nbr_tails);
 
-    auto upper_bound = elements.upper_bound(x);
-    auto lower_bound = std::prev(upper_bound);
-
-
-    SkipListNode* successor_node = find(*upper_bound);
-    SkipListNode* predecessor_node = find(*lower_bound);
     SkipListNode new_node = SkipListNode(x,nbr_tails);
 
-    auto vector_1 = predecessor_node->getNext();
-    vector_1[0] = &new_node;
-    predecessor_node->setNext(vector_1);
-    auto vector = new_node.getNext();
-    vector[0] = successor_node;
-    new_node.setNext(vector);
+    std::cout << "new node vector size: " << new_node.getNext().size() << std::endl;
+
+    if(nbr_tails > max_level){
+        while (head.getNext().size() < nbr_tails)
+        {   
+           auto vector =  head.getNext();
+           vector.push_back(&new_node);
+           head.setNext(vector);
+        }
+        max_level = nbr_tails;
+    }
+
+    auto upper_bound = elements.upper_bound(x); // O(log n)
+    auto lower_bound = std::prev(upper_bound); //O(1)
+
+
+    auto pointers_to_successor = getPointersToX(*upper_bound);
+    auto pointers_to_predecessor = getPointersToX(*lower_bound);
+
+    auto predecessor = find(x);
+
+    std::cout << "Pointers to predecessor" << std::endl;
+    for (const auto& pair : pointers_to_predecessor) {
+        std::cout << "Node value: " << pair.first->getValue()
+                  << ", Level: " << pair.second << std::endl;
+    }
+
+    std::cout << "Pointers to successor" << std::endl;
+    for (const auto& pair : pointers_to_successor) {
+        std::cout << "Node value: " << pair.first->getValue()
+                  << ", Level: " << pair.second << std::endl;
+    }
+
+    // if(predecessor->getNext().size() >= new_node.getNext().size()){
+    //     for(int i = 0; i < new_node.getNext().size(); i++){
+    //         auto pre_vector = predecessor->getNext();
+    //         auto new_vector = new_node.getNext();
+    //         new_vector[i] = pre_vector[i];
+    //         pre_vector[i] = &new_node;
+    //         predecessor->setNext(pre_vector);
+    //         new_node.setNext(new_vector);
+    //     }
+    // }
 
     elements.insert(x);
 
@@ -245,36 +275,18 @@ bool RandSkipLists::del(int x){
        pointersToX[i].first->setNext(vector);
     }
 
+    // Fit number of levels if del element had greatest vector size 
+    auto head_vector = head.getNext();
+    head_vector.erase(std::remove_if(head_vector.begin(), head_vector.end(),
+                    [](SkipListNode* node) { return node == nullptr; }),
+                    head_vector.end());
+
+    head.setNext(head_vector);
+    max_level = head_vector.size();
+
+    // Maintain basic set
     elements.erase(x); // O (log n)
 
     return true;
 
 }
-
-// bool RandSkipLists::del(int x){
-
-//     SkipListNode* del_node = find(x); // O (log n)
-
-//     if (del_node == nullptr){
-//         // Node does not exist
-//         return false;
-//     }
-
-//     auto next_vector = del_node->getNext();
-    
-//     // find Predecessors and redirect pointers
-//     for(int level = del_node->getNext().size() - 1; level >= 0; level--){
-//         SkipListNode* current_node = &head;
-
-//         current_node = getPredecessorOfRespectiveLevel(current_node,x,level);
-
-//         //  Redirect pointer on respective level           
-//         auto next_vector = current_node->getNext();
-//         next_vector[level] = del_node->getNext()[level];
-//         current_node->setNext(next_vector);       
-//     }
-
-//     elements.erase(x);
-
-//     return true;
-// }
