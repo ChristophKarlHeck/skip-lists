@@ -27,8 +27,8 @@ int main(int argc, char *argv[])
     RandSkipLists RandSipLists(S);
     RandSipLists.print();
     RandSipLists.del(5);
-    
-    // RandSipLists.print();
+    RandSipLists.print();
+
     // RandSipLists.insert(5);
     // RandSipLists.print();
 

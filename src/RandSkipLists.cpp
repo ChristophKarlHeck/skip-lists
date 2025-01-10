@@ -120,16 +120,16 @@ SkipListNode* RandSkipLists::find(int x){
 
     SkipListNode* current_node = &head;
 
-    std::cout << "down from level: "<< max_level << std::endl;
+    //std::cout << "down from level: "<< max_level << std::endl;
     for (int level = max_level -1; level >= 0; level--) {
         if(current_node->getNext()[level] == nullptr || current_node->getNext()[level]->getValue() > x){
-            std::cout << "down from level: "<< level << std::endl;
+            //std::cout << "down from level: "<< level << std::endl;
             continue;
         }
         else{
-            std::cout << "next element in level: " << level << std::endl;
+            //std::cout << "next element in level: " << level << std::endl;
             if (current_node->getNext()[level]->getValue() == x){
-                std::cout <<  "Found:" << current_node->getNext()[level] << std::endl;
+                //std::cout <<  "Found:" << current_node->getNext()[level] << std::endl;
                 return current_node->getNext()[level];
             }
             current_node = current_node->getNext()[level];
@@ -140,42 +140,54 @@ SkipListNode* RandSkipLists::find(int x){
     return nullptr;
 }
 
-std::vector<SkipListNode*> RandSkipLists::findPointersToX(int x){
-    // Start in highest list.
-    // If next element in current list is > x. go one list down
-    // Otherwise go to the next element
-    // Stop if element was found or if stuck in list 0.
+std::vector<std::pair<SkipListNode*, int>> RandSkipLists::getPointersToX(int x){
+    // Find previous element of x and on the way to it store pointers to x
 
-    std::vector<SkipListNode*> predecessors;
+    std::vector<std::pair<SkipListNode*, int>> pointersToX;
     SkipListNode* current_node = &head;
 
     auto it = elements.find(x); // O(log n)
-    --it; // O(1)
+    int previous_element_of_x = -1; // Default to -1, representing the head
 
-    int previous = *it;
+    // Check if x is not the smallest element
+    if (it != elements.begin()){
+        --it; // Decrement safely
+        previous_element_of_x = *it; // Set to the predecessor of x
+    }
 
-    std::cout << "down from level: "<< max_level << std::endl;
+    // Go through each level from the max level
     for (int level = max_level -1; level >= 0; level--) {
-        if(current_node->getNext()[level] == nullptr || current_node->getNext()[level]->getValue() > previous){
-            std::cout << "down from level: "<< level << std::endl;
-            if(current_node->getNext()[level]->getValue() == x){
-                predecessors.push_back(current_node);
+        if(current_node->getNext()[level] == nullptr || current_node->getNext()[level]->getValue() > previous_element_of_x){
+            if(current_node->getNext()[level] != nullptr && current_node->getNext()[level]->getValue() == x){
+                // Store pointer to x
+                pointersToX.push_back(std::make_pair(current_node,level));
             }
+            // Go one level down
             continue;
         }
         else{
-            std::cout << "next element in level: " << level << std::endl;
-            if (current_node->getNext()[level]->getValue() == previous){
-                std::cout <<  "Found:" << current_node->getNext()[level] << std::endl;
-                predecessors.push_back(current_node->getNext()[level]);
-                break;
+
+            // If the next node matches the predecessor of x 
+            if (current_node->getNext()[level]->getValue() == previous_element_of_x){
+                auto previous_node_of_x = current_node->getNext()[level];
+                // Make sure tpo get all pointers from the previous element to x
+                while (level >= 0){
+                    if(previous_node_of_x->getNext()[level]->getValue() == x){
+                        pointersToX.push_back(std::make_pair(previous_node_of_x,level));
+                    }
+                    level--;
+                }
+
+                break; // Exit the loop once all pointers are added
             }
+
+            // Move to the next node on the same level
             current_node = current_node->getNext()[level];
             level++;
         }
     }
 
-    return predecessors;
+    return pointersToX;
 }
 
 
@@ -227,16 +239,28 @@ SkipListNode* RandSkipLists::getPredecessorOfRespectiveLevel(SkipListNode* node,
 
 bool RandSkipLists::del(int x){
 
-    // Check if x is in set
-    if (elements.count(x) <= 0) { // O(log n)
+    auto delNode = find(x); // O(log n)
+
+    // Check if x is in skip list
+    if (delNode == nullptr) { // O(log n)
         return false;
     }
 
-    auto predecessors = findPointersToX(x);
+    auto pointersToX = getPointersToX(x); // O(log n)
 
-    std::cout << "predecessor size:" << predecessors.size()<< std::endl;
-    for(int i = 0; i < predecessors.size(); i++){
-        std::cout << "predecessor[" << i << "]: "<< predecessors[i]->getValue() << std::endl;
+    std::cout << "pointersToX size:" << pointersToX.size()<< std::endl;
+    for(int i = 0; i < pointersToX.size(); i++){
+            std::cout << "pointer[" << i << "]: ";
+            std::cout << "Node value: " << pointersToX[i].first->getValue() << ", ";
+            std::cout << "Level: " << pointersToX[i].second << std::endl;
+    }
+
+    // O(c); c = # number of pointers to x
+    // Redirect pointers
+    for(int i = 0; i < pointersToX.size(); i++){
+       auto vector = pointersToX[i].first->getNext();
+       vector[pointersToX[i].second] = delNode->getNext()[pointersToX[i].second];
+       pointersToX[i].first->setNext(vector);
     }
 
     elements.erase(x); // O (log n)

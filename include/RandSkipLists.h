@@ -27,7 +27,7 @@ class RandSkipLists{
 
         int flipCoin(void);
         void BuildSkipLists(void);
-        std::vector<SkipListNode*> findPointersToX(int x);
+        std::vector<std::pair<SkipListNode*, int>> getPointersToX(int x);
         SkipListNode* getPredecessorOfRespectiveLevel(SkipListNode* node, int value, int level);
         
 };
