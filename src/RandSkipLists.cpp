@@ -168,11 +168,11 @@ std::vector<std::pair<SkipListNode*, int>> RandSkipLists::getPointersToX(int x){
         else{
 
             // If the next node matches the predecessor of x 
-            if (current_node->getNext()[level]->getValue() == previous_element_of_x){
+            if (current_node->getNext()[level] != nullptr && current_node->getNext()[level]->getValue() == previous_element_of_x){
                 auto previous_node_of_x = current_node->getNext()[level];
                 // Make sure tpo get all pointers from the previous element to x
                 while (level >= 0){
-                    if(previous_node_of_x->getNext()[level]->getValue() == x){
+                    if(previous_node_of_x->getNext()[level] != nullptr && previous_node_of_x->getNext()[level]->getValue() == x){
                         pointersToX.push_back(std::make_pair(previous_node_of_x,level));
                     }
                     level--;
