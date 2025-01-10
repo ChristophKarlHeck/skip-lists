@@ -19,8 +19,7 @@ class RandSkipLists{
 
     private:
         std::set<int> elements;
-        SkipListNode head;
-        std::vector<SkipListNode> nodes; // need to be removed
+        SkipListNode* head;
         std::mt19937 gen; // Random number generator
         std::uniform_int_distribution<> dist; // Distribution for coin flips
         int max_level;

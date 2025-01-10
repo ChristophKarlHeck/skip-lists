@@ -21,19 +21,20 @@ int main(int argc, char *argv[])
 
     // Create the random set
 
-    for(int i = 0; i < 100000; i++){
-        int lower_bound = 1;
-        int upper_bound = 20;
-        std::set<int> S = createRandomSet(n, lower_bound, upper_bound);
+    for(int i = 0; i < 10000; i++){
+    int lower_bound = 1;
+    int upper_bound = 20;
+    std::set<int> S = createRandomSet(n, lower_bound, upper_bound);
 
-        RandSkipLists RandSipLists(S);
-        RandSipLists.print();
-        RandSipLists.del(5);
-        RandSipLists.print();
+    RandSkipLists RandSipLists(S);
+    RandSipLists.print();
+    RandSipLists.del(5);
+    RandSipLists.print();
+    RandSipLists.insert(5);
+    RandSipLists.print();
     }
     
-    // RandSipLists.insert(5);
-    // RandSipLists.print();
+    
     // RandSipLists.insert(5);
     
 
