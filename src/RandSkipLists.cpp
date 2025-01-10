@@ -226,17 +226,6 @@ bool RandSkipLists::insert(int x){
 
 }
 
-SkipListNode* RandSkipLists::getPredecessorOfRespectiveLevel(SkipListNode* node, int value, int level){
-    
-    // Get predecessor of respective level
-    while (node->getNext()[level]->getValue() != value)
-    {   
-        node = node->getNext()[level];   
-    }
-
-    return node;
-}
-
 bool RandSkipLists::del(int x){
 
     auto delNode = find(x); // O(log n)
@@ -247,13 +236,6 @@ bool RandSkipLists::del(int x){
     }
 
     auto pointersToX = getPointersToX(x); // O(log n)
-
-    std::cout << "pointersToX size:" << pointersToX.size()<< std::endl;
-    for(int i = 0; i < pointersToX.size(); i++){
-            std::cout << "pointer[" << i << "]: ";
-            std::cout << "Node value: " << pointersToX[i].first->getValue() << ", ";
-            std::cout << "Level: " << pointersToX[i].second << std::endl;
-    }
 
     // O(c); c = # number of pointers to x
     // Redirect pointers
