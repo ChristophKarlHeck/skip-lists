@@ -191,6 +191,38 @@ std::vector<std::pair<SkipListNode*, int>> RandSkipLists::getPointersToX(int x){
     return pointersToX;
 }
 
+std::vector<std::pair<SkipListNode*, int>> RandSkipLists::getInsertPointers(SkipListNode* new_node){
+    // Start in highest list.
+    // If next element in current list is > x. go one list down
+    // Otherwise go to the next element
+    // Stop if element was found or if stuck in list 0.
+
+    std::vector<std::pair<SkipListNode*, int>> insertPointers;
+    SkipListNode* current_node = head;
+
+    //std::cout << "down from level: "<< max_level << std::endl;
+    for (int level = new_node->getNext().size()-1; level >= 0; level--) {
+        // Go level down if current_value < x && (next_value == nullptr || next_value > x)
+        if(  current_node->getValue() < new_node->getValue() && 
+            (current_node->getNext()[level] == nullptr || current_node->getNext()[level]->getValue() > new_node->getValue())){
+            insertPointers.push_back(std::make_pair(current_node,level));
+            continue;
+        }
+        // Go to next element if next_value < new_node_value
+        else if (current_node->getNext()[level] != nullptr && current_node->getNext()[level]->getValue() < new_node->getValue()){
+                current_node = current_node->getNext()[level];
+                level++;
+        }
+        else {
+            // level 0 pointer from predessor x to successor of x
+            insertPointers.push_back(std::make_pair(current_node,level));
+            break;
+        }
+    }
+
+    return insertPointers;
+}
+
 
 
 bool RandSkipLists::insert(int x){
@@ -209,6 +241,7 @@ bool RandSkipLists::insert(int x){
 
     std::cout << "new node vector size: " << new_node->getNext().size() << std::endl;
 
+    // Fit size of head if neccessary
     if(nbr_tails > max_level){
         while (head->getNext().size() < nbr_tails)
         {   
@@ -219,36 +252,25 @@ bool RandSkipLists::insert(int x){
         max_level = nbr_tails;
     }
 
-    auto upper_bound = elements.upper_bound(x); // O(log n)
-    auto lower_bound = std::prev(upper_bound); //O(1)
 
+    auto insert_pointers = getInsertPointers(new_node);
 
-    auto pointers_to_successor = getPointersToX(*upper_bound);
-    auto pointers_to_predecessor = getPointersToX(*lower_bound);
-
-    auto predecessor = find(*lower_bound);
-    auto successor = find(*upper_bound);
-
-    std::cout << "Pointers to predecessor" << std::endl;
-    for (const auto& pair : pointers_to_predecessor) {
+    std::cout << "InsertPointers" << std::endl;
+    for (const auto& pair : insert_pointers) {
         std::cout << "Node value: " << pair.first->getValue()
                   << ", Level: " << pair.second << std::endl;
     }
 
-    std::cout << "Pointers to successor" << std::endl;
-    for (const auto& pair : pointers_to_successor) {
-        std::cout << "Node value: " << pair.first->getValue()
-                  << ", Level: " << pair.second << std::endl;
+    for (const auto& pair : insert_pointers) {
+        auto new_vector = new_node->getNext();
+        auto ins_vector = pair.first->getNext();
+        new_vector[pair.second] = pair.first->getNext()[pair.second];
+        ins_vector[pair.second] = new_node;
+        new_node->setNext(new_vector);
+        pair.first->setNext(ins_vector);
     }
 
-    auto pre_vector = predecessor->getNext();
-
-    auto new_vector = new_node->getNext();
-    new_vector[0] = pre_vector[0];
-    pre_vector[0] = new_node;
-    new_node->setNext(new_vector);
-    predecessor->setNext(pre_vector);
-
+    // Maintain elements set
     elements.insert(x);
 
     return true;
