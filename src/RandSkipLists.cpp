@@ -16,55 +16,65 @@ int RandSkipLists::flipCoin(void){
     return -1; 
 }
 
-void RandSkipLists::BuildSkipLists(void){
-
-    // Sort elements and create list 0
-    // For each element, flip a fair coin until HEAD shows up.
-    // Let the number of additional lists the element appears in.
+void RandSkipLists::buildSkipLists(void){
     
-    std::vector<SkipListNode*> nodes;
-
+    // Sort elements and create list 0.
+    // Elements are sorted by default in std::set
+    SkipListNode* current_node = head;
     for (auto value : elements) {
         
+        int level = 0;
+
+        // For each element, flip a fair coin until HEAD shows up
+        // Let the number of additional lists the element appears in.
         int nbr_tails = flipCoin();
+
+        // Track max_level
         max_level = std::max(max_level, nbr_tails);
-        nodes.push_back(new SkipListNode(value, nbr_tails));
+
+        // Create new node
+        SkipListNode* new_node = new SkipListNode(value, nbr_tails);
+
+        // Add pointer from current_node 
+        auto vector = current_node->getNext();
+        vector[level] = new_node;
+        current_node->setNext(vector);
+        current_node = new_node;
     }
+    
+    // From level 1 to max_level - 1
+    for(int level = 1; level < max_level; level++){
 
-    // Set head next vector with proper height
-    std::vector<SkipListNode*> head_vector(max_level, nullptr);
-    head->setNext(head_vector);
+        // For each level add nullptr to head
+        auto head_vector = head->getNext();
+        head_vector.push_back(nullptr);
+        head->setNext(head_vector);
 
-    for(int level = max_level-1; level >= 0; level--){
-        SkipListNode* previous_node = head;
+        current_node = head;
+        SkipListNode* next_node = current_node->getNext()[0];
 
-        // Do it level by levl
-        for(int i = 0; i < nodes.size(); i++){
-
-            if(nodes[i]->getNext().size() >= level + 1){
-                auto& nextVector = previous_node->getNext();
-                nextVector[level] = nodes[i];
-                previous_node->setNext(nextVector);
-                previous_node = nodes[i];
+        // Go through list 0 and
+        // connect each list by the respective pointers
+        while(next_node != nullptr){
+            if(next_node->getNext().size() >= level + 1){
+                auto current_vector = current_node->getNext();
+                current_vector[level] = next_node;
+                current_node->setNext(current_vector);
+                current_node = next_node;
             }
-
+            next_node = next_node->getNext()[0];
         }
-
     }
-
-
-    // Connect each list by the respective 
-
 }
 
 RandSkipLists::RandSkipLists(std::set<int> S):
     elements(S),
-    head(new SkipListNode(-1, 0)),
+    head(new SkipListNode(-1, 1)),
     gen(std::random_device{}()),
     dist(0, 1),
     max_level(0)
 {
-    BuildSkipLists();            
+    buildSkipLists();            
 }
 
 void RandSkipLists::print(void){
@@ -227,7 +237,8 @@ std::vector<std::pair<SkipListNode*, int>> RandSkipLists::getInsertPointers(Skip
 
 bool RandSkipLists::insert(int x){
     
-    SkipListNode* insert_node = find(x); // O (log n)
+    // O (log n)
+    SkipListNode* insert_node = find(x);
         // Check if x is already in list
         
     if (insert_node != nullptr){
@@ -239,9 +250,7 @@ bool RandSkipLists::insert(int x){
 
     SkipListNode* new_node = new SkipListNode(x,nbr_tails);
 
-    std::cout << "new node vector size: " << new_node->getNext().size() << std::endl;
-
-    // Fit size of head if neccessary
+    // When size of head needs to be increased. Increase and add pointer to new_node
     if(nbr_tails > max_level){
         while (head->getNext().size() < nbr_tails)
         {   
@@ -252,15 +261,10 @@ bool RandSkipLists::insert(int x){
         max_level = nbr_tails;
     }
 
-
+    // O(log n)
     auto insert_pointers = getInsertPointers(new_node);
 
-    std::cout << "InsertPointers" << std::endl;
-    for (const auto& pair : insert_pointers) {
-        std::cout << "Node value: " << pair.first->getValue()
-                  << ", Level: " << pair.second << std::endl;
-    }
-
+    // O(c)
     for (const auto& pair : insert_pointers) {
         auto new_vector = new_node->getNext();
         auto ins_vector = pair.first->getNext();

@@ -25,7 +25,7 @@ class RandSkipLists{
         int max_level;
 
         int flipCoin(void);
-        void BuildSkipLists(void);
+        void buildSkipLists(void);
         std::vector<std::pair<SkipListNode*, int>> getPointersToX(int x);
         std::vector<std::pair<SkipListNode*, int>> getInsertPointers(SkipListNode* new_node);
         

@@ -1,5 +1,6 @@
 #ifndef SKIPLISTNODE_H
 #define SKIPLISTNODE_H
+
 #include <vector>
 
 // Class representing a single node in the skip list
