@@ -215,7 +215,9 @@ std::vector<std::pair<SkipListNode*, int>> RandSkipLists::getInsertPointers(Skip
         // Go level down if current_value < x && (next_value == nullptr || next_value > x)
         if(  current_node->getValue() < new_node->getValue() && 
             (current_node->getNext()[level] == nullptr || current_node->getNext()[level]->getValue() > new_node->getValue())){
-            insertPointers.push_back(std::make_pair(current_node,level));
+            if (new_node->getNext().size() > level){
+                insertPointers.push_back(std::make_pair(current_node,level));
+            }
             continue;
         }
         // Go to next element if next_value < new_node_value
@@ -247,6 +249,8 @@ bool RandSkipLists::insert(int x){
     }
 
     int nbr_tails = flipCoin();
+
+    std::cout << "New size:" << nbr_tails << std::endl;
 
     SkipListNode* new_node = new SkipListNode(x,nbr_tails);
 
