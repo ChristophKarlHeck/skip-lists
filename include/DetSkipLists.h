@@ -12,18 +12,18 @@ class DetSkipLists{
         DetSkipLists(std::set<int> S);
 
         void print(void);
-        bool find(int x);
+        SkipListNode* find(int x);
         bool insert(int x);
         bool del(int x);
 
     private:
-        std::set<int> elements;
-        SkipListNode head;
-        std::vector<SkipListNode> nodes;
-        int numberOfLists;
+        std::set<int> m_elements;
+        SkipListNode* m_head;
+        int m_max_level;
 
-        int CalculateNumberOfLists(int n);
-        void BuildSkipLists(void);
+        int calculateNumberOfLists(int n);
+        void buildSkipLists(void);
+        void deleteSkipLists(void);
 };
 
 #endif // DET_SKIP_LISTS_H

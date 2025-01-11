@@ -36,31 +36,36 @@ int main(int argc, char *argv[])
     int upper_bound = 20;
    
 
+    // for(int i = 0; i < 100000; i++){
+    //     std::set<int> S = createRandomSet(n, lower_bound, upper_bound);
+    //     RandSkipLists RandSkipLists(S);
+    //     RandSkipLists.print();
+    //     RandSkipLists.del(5);
+    //     RandSkipLists.print();
+    //     if(RandSkipLists.find(5)!=nullptr){
+    //         throw std::runtime_error("Value 5 not found in the skip list.");
+    //     }
+    //     RandSkipLists.insert(5);
+    //     RandSkipLists.print();
+    //     if(RandSkipLists.find(5)==nullptr){
+    //         throw std::runtime_error("Value 5 not found in the skip list.");
+    //     }
+    // }
+
     for(int i = 0; i < 100000; i++){
         std::set<int> S = createRandomSet(n, lower_bound, upper_bound);
-        RandSkipLists RandSkipLists(S);
-        RandSkipLists.print();
-        RandSkipLists.del(5);
-        RandSkipLists.print();
-        if(RandSkipLists.find(5)!=nullptr){
-            throw std::runtime_error("Value 5 not found in the skip list.");
-        }
-        RandSkipLists.insert(5);
-        RandSkipLists.print();
-        if(RandSkipLists.find(5)==nullptr){
-            throw std::runtime_error("Value 5 not found in the skip list.");
-        }
+        DetSkipLists DetSkipLists(S);
+        DetSkipLists.print();
+        DetSkipLists.del(5);
+        DetSkipLists.print();
+        DetSkipLists.insert(5);
+        DetSkipLists.print();
     }
 
     // benchmark("RandSkipList Find", RandSkipLists, [&](auto& list) {
     //     for (int i = 0; i < n; ++i) list.find(i);
     // }, n);
 
-    
-    // RandSipLists.insert(5);
-    
-
-    //RandSipLists.findPredecessors(5);
 
     return 0;
 }
