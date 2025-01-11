@@ -80,17 +80,17 @@ RandSkipLists::RandSkipLists(std::set<int> S):
 void RandSkipLists::print(void){
 
     // Collect all node values from Level 0
-    std::vector<int> level0Positions;
+    std::vector<int> level_0_Positions;
     SkipListNode* current = m_head;
     while (current) {
         current = current->getNext()[0];
         if (current) {
-            level0Positions.push_back(current->getValue());
+            level_0_Positions.push_back(current->getValue());
         }
     }
 
-    // Calculate the total number of columns (2 per node: value + arrow)
-    size_t totalColumns = level0Positions.size() * 2;
+    // Calculate the total number of columns (2 per node (value))
+    size_t total_columns = level_0_Positions.size() * 2;
 
     // Print each level
     std::cout << "Level " << m_max_level << ": " << std::endl;
@@ -98,15 +98,15 @@ void RandSkipLists::print(void){
         std::cout << "Level " << level << ": ";
 
         current = m_head; // Start from the head for each level
-        size_t columnIndex = 0;
+        size_t column_index = 0;
 
-        while (columnIndex < totalColumns) {
-            // Determine if this column should contain a value or an arrow
-            if (columnIndex % 2 == 0) {
+        while (column_index < total_columns) {
+            // In every second column insert value
+            if (column_index % 2 == 0) {
                 // Column for a value
                 SkipListNode* nextNode = current ? current->getNext()[level] : nullptr;
 
-                if (nextNode && nextNode->getValue() == level0Positions[columnIndex / 2]) {
+                if (nextNode && nextNode->getValue() == level_0_Positions[column_index / 2]) {
                     std::cout << std::setw(4) << nextNode->getValue();
                     current = nextNode; // Move to the next node
                 } else {
@@ -114,13 +114,12 @@ void RandSkipLists::print(void){
                 }
             } 
             
-            ++columnIndex;
+            ++column_index;
         }
 
         // Add nullptr at the end of each level
         std::cout << std::endl;
     }
-
 }
 
 SkipListNode* RandSkipLists::find(int x){
