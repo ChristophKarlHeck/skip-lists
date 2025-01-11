@@ -18,11 +18,11 @@ class RandSkipLists{
         bool del(int x);
 
     private:
-        std::set<int> elements;
-        SkipListNode* head;
-        std::mt19937 gen; // Random number generator
-        std::uniform_int_distribution<> dist; // Distribution for coin flips
-        int max_level;
+        std::set<int> m_elements;
+        SkipListNode* m_head;
+        std::mt19937 m_gen; // Random number generator
+        std::uniform_int_distribution<> m_dist; // Distribution for coin flips
+        int m_max_level;
 
         int flipCoin(void);
         void buildSkipLists(void);
