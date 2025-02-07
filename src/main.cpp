@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
         }
 
         // Write n and log(n) only once
-        configFile << "Log2N, N, Nlog2N, n²  \n";
+        configFile << "Log2N,N,Nlog2N,n²\n";
         configFile << std::log2(n) << "," << n << "," << n * std::log2(n) << "," << n*n << "\n";
         configFile.close();
 
@@ -53,17 +53,18 @@ int main(int argc, char *argv[]) {
             std::cerr << "Error: Could not open det_analysis.csv for writing." << std::endl;
             return 1;
         }
-        detCsvFile << "Round, RunningTimeConstruction, RunningTimeFinding, RunningTimeDeleting, RunningTimeInserting, MaxHeight\n"; // CSV Header
+        detCsvFile << "Round,RunningTimeConstruction,RunningTimeFinding,RunningTimeDeleting,RunningTimeInserting,MaxHeight\n"; // CSV Header
     }
 
     for(int i = 0; i < number_of_rounds; i++){
         std::set<int> S = Utils::createRandomSet(n);
-        int rand_element;
-        if(i%2==0){
-            rand_element=Utils::getRandomElementInSet(S);
-        } else{
-            rand_element=Utils::getRandomElementNotInSet(S,n);
-        } 
+        int rand_element=Utils::getRandomElementInSet(S);
+        // int rand_element;
+        // if(i%2==0){
+        //     rand_element=Utils::getRandomElementInSet(S);
+        // } else{
+        //     rand_element=Utils::getRandomElementNotInSet(S,n);
+        // } 
         DetSkipList detSkipList(S);        
         auto [number_of_construction_steps, height] = detSkipList.construct();     // Construct the deterministic SkipList
         // detSkipList.print();

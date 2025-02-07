@@ -130,7 +130,7 @@ SkipListNode* RandSkipLists::find(int x){
 
     SkipListNode* current_node = m_head;
 
-    //std::cout << "down from level: "<< max_level << std::endl;
+    //std::cout << "down from level: "<< m_max_level << std::endl;
     for (int level = m_max_level -1; level >= 0; level--) {
         if(current_node->getNext()[level] == nullptr || current_node->getNext()[level]->getValue() > x){
             //std::cout << "down from level: "<< level << std::endl;
