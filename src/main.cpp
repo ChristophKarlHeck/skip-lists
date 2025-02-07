@@ -38,8 +38,8 @@ int main(int argc, char *argv[])
     // }
 
     for(int i = 0; i < 100000; i++){
-        std::set<int> S = createRandomSet(n);
-        rand_element_from_S = 
+        std::set<int> S = Utils::createRandomSet(n);
+        rand_element =  
         DetSkipLists DetSkipLists(S);
         DetSkipLists.del(5);
         DetSkipLists.insert(5);

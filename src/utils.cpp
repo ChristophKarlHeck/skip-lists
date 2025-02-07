@@ -39,8 +39,11 @@ int Utils::getRandomElement(const std::set<int>& S) {
 
     std::random_device rd;
     std::mt19937 gen(rd());
+    // generates a random index in the range [0, S.size() - 1]
     std::uniform_int_distribution<size_t> dist(0, S.size() - 1);
 
+    // std::next(it, n) advances the iterator it by n positions
     auto it = std::next(S.begin(), dist(gen));
+    
     return *it;
 }
