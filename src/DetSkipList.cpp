@@ -122,11 +122,11 @@ std::tuple<int,SkipListNode*> DetSkipList::find(int x){
 
     SkipListNode* current_node = m_head;
 
-    std::cout << "down from level: "<< m_max_level << std::endl;
+    //std::cout << "down from level: "<< m_max_level << std::endl;
     for (int level = m_max_level - 1; level >= 0; level--) {
         number_of_steps++;
         if(current_node->getNext()[level] == nullptr || current_node->getNext()[level]->getValue() > x){
-            std::cout << "down from level: "<< level << std::endl;
+            //std::cout << "down from level: "<< level << std::endl;
             if(level==0){
                 std::cout << "NOT FOUND" << std::endl;
                 break;
@@ -134,7 +134,7 @@ std::tuple<int,SkipListNode*> DetSkipList::find(int x){
             continue;
         }
         else{
-            std::cout << "next element in level: " << level << std::endl;
+            //std::cout << "next element in level: " << level << std::endl;
             if (current_node->getNext()[level] != nullptr && current_node->getNext()[level]->getValue() == x){
                 std::cout << "FOUND on level: " << level << std::endl;
                 return std::make_tuple(number_of_steps,current_node->getNext()[level]);

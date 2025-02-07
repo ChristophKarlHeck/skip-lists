@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
         }
         detCsvFile << "Round,RunningTimeConstruction,RunningTimeFinding,RunningTimeDeleting,RunningTimeInserting,MaxHeight\n"; // CSV Header
     }
-
+    std::cout << "DETERMINISTIC SKIPLIST" <<std::endl;
     for(int i = 0; i < number_of_rounds; i++){
         std::set<int> S = Utils::createRandomSet(n);
         int rand_element=Utils::getRandomElementInSet(S);
@@ -67,16 +67,16 @@ int main(int argc, char *argv[]) {
         // } 
         DetSkipList detSkipList(S);        
         auto [number_of_construction_steps, max_height] = detSkipList.construct();     // Construct the deterministic SkipList
-        // detSkipList.print();
-        // std::cout << "TASK: Find(" << rand_element << ")" <<std::endl;
+        detSkipList.print();
+        std::cout << "TASK: Find(" << rand_element << ")" <<std::endl;
         auto [number_of_finding_steps, node] = detSkipList.find(rand_element);     // Find
-        //detSkipList.print();
-        // std::cout << "TASK: Delete(" << rand_element << ")" <<std::endl;
+        detSkipList.print();
+        std::cout << "TASK: Delete(" << rand_element << ")" <<std::endl;
         int number_of_deleting_steps = detSkipList.del(rand_element);              // Delete
-        // detSkipList.print();
-        //std::cout << "TASK: Insert(" << rand_element << ")" <<std::endl;
+        detSkipList.print();
+        std::cout << "TASK: Insert(" << rand_element << ")" <<std::endl;
         int number_of_inserting_steps = detSkipList.insert(rand_element);          // Insert
-        // detSkipList.print();
+        detSkipList.print();
 
         if (write_to_file) {
             detCsvFile << (i + 1) << ","
@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
         }
         randCsvFile << "Round,RunningTimeConstruction,RunningTimeFinding,RunningTimeDeleting,RunningTimeInserting,MaxHeight\n"; // CSV Header
     }
-
+    std::cout << "\nRANDOMIZED SKIPLIST" <<std::endl;
     for(int i = 0; i < number_of_rounds; i++){
         std::set<int> S = Utils::createRandomSet(n);
         int rand_element=Utils::getRandomElementInSet(S);
@@ -111,16 +111,16 @@ int main(int argc, char *argv[]) {
         // } 
         RandSkipList randSkipList(S);        
         auto [number_of_construction_steps, max_height] = randSkipList.construct();     // Construct the deterministic SkipList
-        // randSkipList.print();
-        // std::cout << "TASK: Find(" << rand_element << ")" <<std::endl;
+        randSkipList.print();
+        std::cout << "TASK: Find(" << rand_element << ")" <<std::endl;
         auto [number_of_finding_steps, node] = randSkipList.find(rand_element);     // Find
-        //detSkipList.print();
-        // std::cout << "TASK: Delete(" << rand_element << ")" <<std::endl;
+        randSkipList.print();
+        std::cout << "TASK: Delete(" << rand_element << ")" <<std::endl;
         int number_of_deleting_steps = randSkipList.del(rand_element);              // Delete
-        // detSkipList.print();
-        //std::cout << "TASK: Insert(" << rand_element << ")" <<std::endl;
+        randSkipList.print();
+        std::cout << "TASK: Insert(" << rand_element << ")" <<std::endl;
         int number_of_inserting_steps = randSkipList.insert(rand_element);          // Insert
-        // detSkipList.print();
+        randSkipList.print();
 
         if (write_to_file) {
             randCsvFile << (i + 1) << ","

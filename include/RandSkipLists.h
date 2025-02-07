@@ -25,7 +25,7 @@ class RandSkipList{
         std::uniform_int_distribution<> m_dist; // Distribution for coin flips
         int m_max_level;
 
-        int flipCoin(void);
+        unsigned int flipCoin(void);
         std::tuple<int,std::vector<std::pair<SkipListNode*, int>>> getPointersToX(int x);
         std::tuple<int,std::vector<std::pair<SkipListNode*, int>>> getInsertPointers(SkipListNode* new_node);
         

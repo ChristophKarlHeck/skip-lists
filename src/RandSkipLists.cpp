@@ -4,17 +4,15 @@
 
 #include "RandSkipLists.h"
 
-int RandSkipList::flipCoin(void){
+unsigned int RandSkipList::flipCoin() {
+    unsigned int nbr_tails = 0;
+    do {
+        nbr_tails++;
+    } while (m_dist(m_gen)); // Continue flipping until false
 
-    int nbr_tails = 0;
-    while (true)
-    {   
-        nbr_tails++; // each node is at least in level 0. Therefore before flipCoin
-        // Directly return the random boolean
-        if(m_dist(m_gen)) return nbr_tails;
-    }
-    return -1; 
+    return nbr_tails;
 }
+
 
 std::tuple<int,int> RandSkipList::construct(void){
 
@@ -151,7 +149,7 @@ std::tuple<int,SkipListNode*> RandSkipList::find(int x){
         else{
             //std::cout << "next element in level: " << level << std::endl;
             if (current_node->getNext()[level] != nullptr && current_node->getNext()[level]->getValue() == x){
-                //std::cout <<  "Found:" << current_node->getNext()[level] << std::endl;
+                std::cout <<  "Found:" << current_node->getNext()[level] << std::endl;
                 return std::make_tuple(number_of_steps,current_node->getNext()[level]);
             }
             current_node = current_node->getNext()[level];
@@ -195,7 +193,7 @@ std::tuple<int,std::vector<std::pair<SkipListNode*, int>>> RandSkipList::getPoin
             // If the next node matches the predecessor of x 
             if (current_node->getNext()[level] != nullptr && current_node->getNext()[level]->getValue() == previous_element_of_x){
                 auto previous_node_of_x = current_node->getNext()[level];
-                // Make sure tpo get all pointers from the previous element to x
+                // Make sure to get all pointers from the previous element to x
                 while (level >= 0){
                     number_of_steps++;
                     if(previous_node_of_x->getNext()[level] != nullptr && previous_node_of_x->getNext()[level]->getValue() == x){
@@ -261,7 +259,6 @@ int RandSkipList::insert(int x){
     
     // O (log n)
     auto [number_of_finding_steps, insert_node] = find(x);
-    number_of_steps += number_of_finding_steps;
         
     // Check if x is already in list   
     if (insert_node != nullptr){
@@ -302,9 +299,8 @@ int RandSkipList::insert(int x){
         pair.first->setNext(ins_vector);
     }
 
-    // Maintain elements set
+    // O(log n)
     m_elements.insert(x);
-    number_of_steps += std::log2(m_elements.size());
 
     return number_of_steps;
 
@@ -315,7 +311,6 @@ int RandSkipList::del(int x){
     int number_of_steps = 0; // runtime analysis
 
     auto [number_of_finding_steps, del_node] = find(x); // O(log n)
-    number_of_steps += number_of_finding_steps; 
 
     // Check if x is in skip list
     if (del_node == nullptr) { // O(log n)
@@ -345,7 +340,6 @@ int RandSkipList::del(int x){
 
     // Maintain basic set
     m_elements.erase(x); // O (log n)
-    number_of_steps += std::log2(m_elements.size());
 
     delete del_node;
 
