@@ -31,7 +31,8 @@ std::set<int> Utils::createRandomSet(int n) {
 }
 
 // Function to get a random element from a given set
-int Utils::getRandomElement(const std::set<int>& S) {
+// Pass by reference since we only read
+int Utils::getRandomElementInSet(const std::set<int>& S) {
 
     if (S.empty()) {
         throw std::runtime_error("Set is empty");
@@ -44,6 +45,20 @@ int Utils::getRandomElement(const std::set<int>& S) {
 
     // std::next(it, n) advances the iterator it by n positions
     auto it = std::next(S.begin(), dist(gen));
-    
+
     return *it;
+}
+
+int Utils::getRandomElementNotInSet(const std::set<int>& S, int n) {
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> dist(1, n * 10);
+
+    int random_value;
+    do {
+        random_value = dist(gen);
+    } while (S.find(random_value) != S.end()); // Keep generating if it's in the set
+
+    return random_value;
 }

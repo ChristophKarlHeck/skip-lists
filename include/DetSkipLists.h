@@ -15,6 +15,7 @@ class DetSkipLists{
         SkipListNode* find(int x);
         bool insert(int x);
         bool del(int x);
+        std::tuple<int,int> construct(void);
 
     private:
         std::set<int> m_elements;
@@ -22,7 +23,6 @@ class DetSkipLists{
         int m_max_level;
 
         int calculateNumberOfLists(int n);
-        void buildSkipLists(void);
         void deleteSkipLists(void);
 };
 

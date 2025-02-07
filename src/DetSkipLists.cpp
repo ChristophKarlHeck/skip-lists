@@ -2,6 +2,7 @@
 #include <iostream>
 #include <iomanip> // For std::setw
 #include <algorithm> // For std::lower_bound
+#include <tuple>  // For std::tuple
 
 #include "DetSkipLists.h"
 
@@ -16,7 +17,10 @@ int DetSkipLists::calculateNumberOfLists(int n){
 
 }
 
-void DetSkipLists::buildSkipLists(void) {
+std::tuple<int,int> DetSkipLists::construct(void) {
+
+    int height = 0;
+    int number_of_steps = 0;
 
     // Create nodes for all elements in the set
     std::vector<SkipListNode*> helper_list;
@@ -51,16 +55,14 @@ void DetSkipLists::buildSkipLists(void) {
         }
         current = helper_list[i];
     }
+    return std::make_tuple(number_of_steps, height);
 }
 
 DetSkipLists::DetSkipLists(std::set<int> S):
     m_elements(S),
     m_head(new SkipListNode(-1, calculateNumberOfLists(S.size()) + 1)),
     m_max_level(calculateNumberOfLists(S.size() + 1))
-{
-    std::cout << "NumberOfLists: "<< m_max_level << std::endl;
-    buildSkipLists();            
-}
+{  }
 
 void DetSkipLists::print(void){
 
@@ -163,8 +165,8 @@ bool DetSkipLists::insert(int x){
 
     m_head = new SkipListNode(-1, m_max_level);
 
-    // I have to call buildSkip Lists, since when we need a new level, we need a new list, we need to rebuild entire list   
-    buildSkipLists();
+    // I have to constrcut Lists, since when we need a new level, we need a new list, we need to rebuild entire list   
+    construct();
 
     return true;
 }
@@ -186,7 +188,7 @@ bool DetSkipLists::del(int x){
 
     m_head = new SkipListNode(-1, m_max_level);
 
-    buildSkipLists();
+    construct();
 
     return true;
 

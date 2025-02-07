@@ -9,7 +9,10 @@ public:
     static std::set<int> createRandomSet(int n);
 
     // Function to get a random element from a given set
-    static int getRandomElement(const std::set<int>& S);
+    static int getRandomElementInSet(const std::set<int>& S);
+
+    // Function to get a random element not in a given set
+    static int getRandomElementNotInSet(const std::set<int>& S, int n);
 };
 
 #endif // UTILS_H
