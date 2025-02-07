@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
     // Determine if output should be written to a file
     bool write_to_file = (argc == 4 && std::string(argv[3]) == "true");
 
-    std::ofstream configFile, detCsvFile;
+    std::ofstream configFile, detCsvFile, randCsvFile;
 
     if (write_to_file) {
         // Open the configuration file for storing n and log(n)
@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
         //     rand_element=Utils::getRandomElementNotInSet(S,n);
         // } 
         DetSkipList detSkipList(S);        
-        auto [number_of_construction_steps, height] = detSkipList.construct();     // Construct the deterministic SkipList
+        auto [number_of_construction_steps, max_height] = detSkipList.construct();     // Construct the deterministic SkipList
         // detSkipList.print();
         // std::cout << "TASK: Find(" << rand_element << ")" <<std::endl;
         auto [number_of_finding_steps, node] = detSkipList.find(rand_element);     // Find
@@ -84,13 +84,57 @@ int main(int argc, char *argv[]) {
                     << number_of_finding_steps << ","
                     << number_of_deleting_steps << ","
                     << number_of_inserting_steps << ","
-                    << height << "\n";
+                    << max_height << "\n";
         }
     }
 
     if (write_to_file) {
         detCsvFile.close();
-        std::cout << "Results saved to output.csv and config.csv" << std::endl;
+        std::cout << "Results saved to det_analysis.csv" << std::endl;
+
+        randCsvFile.open("rand_analysis.csv");
+        if (!randCsvFile.is_open()) {
+            std::cerr << "Error: Could not open rand_analysis.csv for writing." << std::endl;
+            return 1;
+        }
+        randCsvFile << "Round,RunningTimeConstruction,RunningTimeFinding,RunningTimeDeleting,RunningTimeInserting,MaxHeight\n"; // CSV Header
+    }
+
+    for(int i = 0; i < number_of_rounds; i++){
+        std::set<int> S = Utils::createRandomSet(n);
+        int rand_element=Utils::getRandomElementInSet(S);
+        // int rand_element;
+        // if(i%2==0){
+        //     rand_element=Utils::getRandomElementInSet(S);
+        // } else{
+        //     rand_element=Utils::getRandomElementNotInSet(S,n);
+        // } 
+        RandSkipList randSkipList(S);        
+        auto [number_of_construction_steps, max_height] = randSkipList.construct();     // Construct the deterministic SkipList
+        // randSkipList.print();
+        // std::cout << "TASK: Find(" << rand_element << ")" <<std::endl;
+        auto [number_of_finding_steps, node] = randSkipList.find(rand_element);     // Find
+        //detSkipList.print();
+        // std::cout << "TASK: Delete(" << rand_element << ")" <<std::endl;
+        int number_of_deleting_steps = randSkipList.del(rand_element);              // Delete
+        // detSkipList.print();
+        //std::cout << "TASK: Insert(" << rand_element << ")" <<std::endl;
+        int number_of_inserting_steps = randSkipList.insert(rand_element);          // Insert
+        // detSkipList.print();
+
+        if (write_to_file) {
+            randCsvFile << (i + 1) << ","
+                    << number_of_construction_steps << ","
+                    << number_of_finding_steps << ","
+                    << number_of_deleting_steps << ","
+                    << number_of_inserting_steps << ","
+                    << max_height << "\n";
+        }
+    }
+
+    if (write_to_file) {
+        randCsvFile.close();
+        std::cout << "Results saved to rand_analysis.csv" << std::endl;
     }
 
     return 0;

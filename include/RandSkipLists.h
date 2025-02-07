@@ -8,14 +8,15 @@
 
 #include "SkipListNode.h"
 
-class RandSkipLists{
+class RandSkipList{
     public:
-        RandSkipLists(std::set<int> S);
+        RandSkipList(std::set<int> S);
 
         void print(void);
-        SkipListNode* find(int x);
-        bool insert(int x);
-        bool del(int x);
+        std::tuple<int,SkipListNode*> find(int x);
+        int insert(int x);
+        int del(int x);
+        std::tuple<int,int> construct(void);
 
     private:
         std::set<int> m_elements;
@@ -25,9 +26,8 @@ class RandSkipLists{
         int m_max_level;
 
         int flipCoin(void);
-        void buildSkipLists(void);
-        std::vector<std::pair<SkipListNode*, int>> getPointersToX(int x);
-        std::vector<std::pair<SkipListNode*, int>> getInsertPointers(SkipListNode* new_node);
+        std::tuple<int,std::vector<std::pair<SkipListNode*, int>>> getPointersToX(int x);
+        std::tuple<int,std::vector<std::pair<SkipListNode*, int>>> getInsertPointers(SkipListNode* new_node);
         
 };
 

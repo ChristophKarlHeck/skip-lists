@@ -4,7 +4,7 @@
 
 #include "RandSkipLists.h"
 
-int RandSkipLists::flipCoin(void){
+int RandSkipList::flipCoin(void){
 
     int nbr_tails = 0;
     while (true)
@@ -16,13 +16,16 @@ int RandSkipLists::flipCoin(void){
     return -1; 
 }
 
-void RandSkipLists::buildSkipLists(void){
+std::tuple<int,int> RandSkipList::construct(void){
+
+    int number_of_steps = 0; // runtime analysis
     
     // Sort elements and create list 0.
     // Elements are sorted by default in std::set
     SkipListNode* current_node = m_head;
     for (auto value : m_elements) {
-        
+        number_of_steps++;
+
         int level = 0;
 
         // For each element, flip a fair coin until HEAD shows up
@@ -42,8 +45,9 @@ void RandSkipLists::buildSkipLists(void){
         current_node = new_node;
     }
     
-    // From level 1 to max_level - 1
+    // From level 1 to max_level
     for(int level = 1; level < m_max_level; level++){
+        number_of_steps++;
 
         // For each level add nullptr to head
         auto head_vector = m_head->getNext();
@@ -56,6 +60,7 @@ void RandSkipLists::buildSkipLists(void){
         // Go through list 0 and
         // connect each list by the respective pointers
         while(next_node != nullptr){
+            number_of_steps++;
             if(next_node->getNext().size() >= level + 1){
                 auto current_vector = current_node->getNext();
                 current_vector[level] = next_node;
@@ -65,19 +70,19 @@ void RandSkipLists::buildSkipLists(void){
             next_node = next_node->getNext()[0];
         }
     }
+
+    return std::make_tuple(number_of_steps, m_max_level);
 }
 
-RandSkipLists::RandSkipLists(std::set<int> S):
+RandSkipList::RandSkipList(std::set<int> S):
     m_elements(S),
     m_head(new SkipListNode(-1, 1)),
     m_gen(std::random_device{}()),
     m_dist(0, 1),
     m_max_level(0)
-{
-    buildSkipLists();            
-}
+{ }
 
-void RandSkipLists::print(void){
+void RandSkipList::print(void){
 
     // Collect all node values from Level 0
     std::vector<int> level_0_Positions;
@@ -122,36 +127,45 @@ void RandSkipLists::print(void){
     }
 }
 
-SkipListNode* RandSkipLists::find(int x){
+std::tuple<int,SkipListNode*> RandSkipList::find(int x){
     // Start in highest list.
     // If next element in current list is > x. go one list down
     // Otherwise go to the next element
     // Stop if element was found or if stuck in list 0.
 
+    int number_of_steps = 0; // runtime analysis
+
     SkipListNode* current_node = m_head;
 
     //std::cout << "down from level: "<< m_max_level << std::endl;
     for (int level = m_max_level -1; level >= 0; level--) {
+        number_of_steps++;
         if(current_node->getNext()[level] == nullptr || current_node->getNext()[level]->getValue() > x){
             //std::cout << "down from level: "<< level << std::endl;
+            if(level==0){
+                std::cout << "NOT FOUND" << std::endl;
+                break;
+            }
             continue;
         }
         else{
             //std::cout << "next element in level: " << level << std::endl;
             if (current_node->getNext()[level] != nullptr && current_node->getNext()[level]->getValue() == x){
                 //std::cout <<  "Found:" << current_node->getNext()[level] << std::endl;
-                return current_node->getNext()[level];
+                return std::make_tuple(number_of_steps,current_node->getNext()[level]);
             }
             current_node = current_node->getNext()[level];
             level++;
         }
     }
 
-    return nullptr;
+    return std::make_tuple(number_of_steps,nullptr);
 }
 
-std::vector<std::pair<SkipListNode*, int>> RandSkipLists::getPointersToX(int x){
+std::tuple<int,std::vector<std::pair<SkipListNode*, int>>> RandSkipList::getPointersToX(int x){
     // Find previous element of x and on the way to it store pointers to x
+
+    int number_of_steps = 0; // runtime analysis
 
     std::vector<std::pair<SkipListNode*, int>> pointersToX;
     SkipListNode* current_node = m_head;
@@ -167,6 +181,7 @@ std::vector<std::pair<SkipListNode*, int>> RandSkipLists::getPointersToX(int x){
 
     // Go through each level from the max level
     for (int level = m_max_level -1; level >= 0; level--) {
+        number_of_steps++;
         if(current_node->getNext()[level] == nullptr || current_node->getNext()[level]->getValue() > previous_element_of_x){
             if(current_node->getNext()[level] != nullptr && current_node->getNext()[level]->getValue() == x){
                 // Store pointer to x
@@ -182,6 +197,7 @@ std::vector<std::pair<SkipListNode*, int>> RandSkipLists::getPointersToX(int x){
                 auto previous_node_of_x = current_node->getNext()[level];
                 // Make sure tpo get all pointers from the previous element to x
                 while (level >= 0){
+                    number_of_steps++;
                     if(previous_node_of_x->getNext()[level] != nullptr && previous_node_of_x->getNext()[level]->getValue() == x){
                         pointersToX.push_back(std::make_pair(previous_node_of_x,level));
                     }
@@ -197,20 +213,23 @@ std::vector<std::pair<SkipListNode*, int>> RandSkipLists::getPointersToX(int x){
         }
     }
 
-    return pointersToX;
+    return std::make_tuple(number_of_steps,pointersToX);
 }
 
-std::vector<std::pair<SkipListNode*, int>> RandSkipLists::getInsertPointers(SkipListNode* new_node){
+std::tuple<int,std::vector<std::pair<SkipListNode*, int>>> RandSkipList::getInsertPointers(SkipListNode* new_node){
     // Start in highest list.
     // If next element in current list is > x. go one list down
     // Otherwise go to the next element
     // Stop if element was found or if stuck in list 0.
+
+    int number_of_steps = 0; // runtime analysis
 
     std::vector<std::pair<SkipListNode*, int>> insertPointers;
     SkipListNode* current_node = m_head;
 
     //std::cout << "down from level: "<< max_level << std::endl;
     for (int level = new_node->getNext().size()-1; level >= 0; level--) {
+        number_of_steps++;
         // Go level down if current_value < x && (next_value == nullptr || next_value > x)
         if(  current_node->getValue() < new_node->getValue() && 
             (current_node->getNext()[level] == nullptr || current_node->getNext()[level]->getValue() > new_node->getValue())){
@@ -231,17 +250,20 @@ std::vector<std::pair<SkipListNode*, int>> RandSkipLists::getInsertPointers(Skip
         }
     }
 
-    return insertPointers;
+    return std::make_tuple(number_of_steps,insertPointers);
 }
 
 
 
-bool RandSkipLists::insert(int x){
+int RandSkipList::insert(int x){
+
+    int number_of_steps = 0; // runtime analysis
     
     // O (log n)
-    SkipListNode* insert_node = find(x);
-        // Check if x is already in list
+    auto [number_of_finding_steps, insert_node] = find(x);
+    number_of_steps += number_of_finding_steps;
         
+    // Check if x is already in list   
     if (insert_node != nullptr){
         // Node does exist
         return false;
@@ -256,7 +278,8 @@ bool RandSkipLists::insert(int x){
     // When size of head needs to be increased. Increase and add pointer to new_node
     if(nbr_tails > m_max_level){
         while (m_head->getNext().size() < nbr_tails)
-        {   
+        {  
+           number_of_steps++;
            auto vector = m_head->getNext();
            vector.push_back(new_node);
            m_head->setNext(vector);
@@ -265,10 +288,12 @@ bool RandSkipLists::insert(int x){
     }
 
     // O(log n)
-    auto insert_pointers = getInsertPointers(new_node);
+    auto [number_steps_get_pointers, insert_pointers] = getInsertPointers(new_node);
+    number_of_steps += number_steps_get_pointers;
 
     // O(c)
     for (const auto& pair : insert_pointers) {
+        number_of_steps++;
         auto new_vector = new_node->getNext();
         auto ins_vector = pair.first->getNext();
         new_vector[pair.second] = pair.first->getNext()[pair.second];
@@ -279,28 +304,34 @@ bool RandSkipLists::insert(int x){
 
     // Maintain elements set
     m_elements.insert(x);
+    number_of_steps += std::log2(m_elements.size());
 
-    return true;
+    return number_of_steps;
 
 }
 
-bool RandSkipLists::del(int x){
+int RandSkipList::del(int x){
 
-    auto delNode = find(x); // O(log n)
+    int number_of_steps = 0; // runtime analysis
+
+    auto [number_of_finding_steps, del_node] = find(x); // O(log n)
+    number_of_steps += number_of_finding_steps; 
 
     // Check if x is in skip list
-    if (delNode == nullptr) { // O(log n)
+    if (del_node == nullptr) { // O(log n)
         return false;
     }
 
-    auto pointersToX = getPointersToX(x); // O(log n)
+    auto [number_steps_get_pointers, pointers_to_x]= getPointersToX(x); // O(log n)
+    number_of_steps += number_steps_get_pointers; 
 
     // O(c); c = # number of pointers to x
     // Redirect pointers
-    for(int i = 0; i < pointersToX.size(); i++){
-       auto vector = pointersToX[i].first->getNext();
-       vector[pointersToX[i].second] = delNode->getNext()[pointersToX[i].second];
-       pointersToX[i].first->setNext(vector);
+    for(int i = 0; i < pointers_to_x.size(); i++){
+       number_of_steps++;
+       auto vector = pointers_to_x[i].first->getNext();
+       vector[pointers_to_x[i].second] = del_node->getNext()[pointers_to_x[i].second];
+       pointers_to_x[i].first->setNext(vector);
     }
 
     // Fit number of levels if del element had greatest vector size 
@@ -314,9 +345,10 @@ bool RandSkipLists::del(int x){
 
     // Maintain basic set
     m_elements.erase(x); // O (log n)
+    number_of_steps += std::log2(m_elements.size());
 
-    delete delNode;
+    delete del_node;
 
-    return true;
+    return number_of_steps;
 
 }
