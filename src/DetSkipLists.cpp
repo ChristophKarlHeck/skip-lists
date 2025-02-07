@@ -6,7 +6,7 @@
 
 #include "DetSkipLists.h"
 
-int DetSkipLists::calculateNumberOfLists(int n){
+int DetSkipList::calculateNumberOfLists(int n){
     
     // log2(n) <= i
     double log2 = std::log2(n);
@@ -17,18 +17,19 @@ int DetSkipLists::calculateNumberOfLists(int n){
 
 }
 
-std::tuple<int,int> DetSkipLists::construct(void) {
+std::tuple<int,int> DetSkipList::construct(void) {
 
-    int height = 0;
-    int number_of_steps = 0;
+    int number_of_steps = 0; // runtime analysis
 
     // Create nodes for all elements in the set
     std::vector<SkipListNode*> helper_list;
     int position = 1; // Start with 1 otherwise modulo operation fails
     for (auto value : m_elements) {
+        number_of_steps++;
         int nbr_lists_element_appears_in = 0;
         // Figure out in how many SkipLists the element appears in
         for (int i = 0; i < m_max_level; i++){
+            number_of_steps++;
             int step = pow(2,i);
             if(position % step == 0){
                 nbr_lists_element_appears_in ++;
@@ -45,26 +46,28 @@ std::tuple<int,int> DetSkipLists::construct(void) {
     // Connect nodes with pointers on each respective level
     SkipListNode* current = m_head;
     for(int i = 0; i < helper_list.size(); i++){
+        number_of_steps++;
         for(int level = 0; level < current->getNext().size(); level++){
+            number_of_steps++;
             int step = pow(2,level);
-             if (i + step -1 < helper_list.size()) {
+            if (i + step -1 < helper_list.size()) {
                 auto next_vector = current->getNext();
                 next_vector[level] = helper_list[i + step - 1];
                 current->setNext(next_vector);
-             }
+            }
         }
         current = helper_list[i];
     }
-    return std::make_tuple(number_of_steps, height);
+    return std::make_tuple(number_of_steps, m_max_level);
 }
 
-DetSkipLists::DetSkipLists(std::set<int> S):
+DetSkipList::DetSkipList(std::set<int> S):
     m_elements(S),
     m_head(new SkipListNode(-1, calculateNumberOfLists(S.size()) + 1)),
     m_max_level(calculateNumberOfLists(S.size() + 1))
 {  }
 
-void DetSkipLists::print(void){
+void DetSkipList::print(void){
 
     // Collect all node values from Level 0
     std::vector<int> level_0_Positions;
@@ -109,14 +112,17 @@ void DetSkipLists::print(void){
     }
 }
 
-SkipListNode* DetSkipLists::find(int x){
+std::tuple<int,SkipListNode*> DetSkipList::find(int x){
     // Start in highest list.
     // If next element in current list is > x. go one list down
     // Otherwise go to the next element
     // Stop if element was found or if stuck in list 0.
 
+    int number_of_steps = 0; // runtime analysis
+
     SkipListNode* current_node = m_head;
     for (int level = m_max_level; level >= 0; level--) {
+        number_of_steps++;
         if(current_node->getNext()[level] == nullptr || current_node->getNext()[level]->getValue() > x){
             std::cout << "down from level: "<< level << std::endl;
             continue;
@@ -124,17 +130,19 @@ SkipListNode* DetSkipLists::find(int x){
         else{
             std::cout << "next element in level: " << level << std::endl;
             if (current_node->getNext()[level] != nullptr && current_node->getNext()[level]->getValue() == x){
-                return current_node->getNext()[level];
+                return std::make_tuple(number_of_steps,current_node->getNext()[level]);
             }
             current_node = current_node->getNext()[level];
             level++;
         }
     }
 
-    return nullptr;
+    return std::make_tuple(number_of_steps,nullptr);
 }
 
-void DetSkipLists::deleteSkipLists(void){
+int DetSkipList::deleteSkipList(void){
+
+    int number_of_steps = 0; // runtime analysis
 
     int level = 0;
     SkipListNode* current = m_head;
@@ -144,54 +152,71 @@ void DetSkipLists::deleteSkipLists(void){
         delete current;
         current = next;
         next = next->getNext()[level];
+        number_of_steps++;
     }
+
+    return number_of_steps;
 }
 
-bool DetSkipLists::insert(int x){
+int DetSkipList::insert(int x){
+
+    int number_of_steps = 0;
     
-    if(m_elements.find(x) != m_elements.end()){
-        // Check if x is already in list
-        return false;
+    auto [number_of_finding_steps, node] = find(x);
+    number_of_steps+= number_of_finding_steps;
+
+    if(node != nullptr){
+        // node is already in list
+        return number_of_steps;
     }
 
-    // maintain elements for quick checks
+    // maintain elements for constructing later -> binary search tree O(log(n))
     m_elements.insert(x);
+    number_of_steps += std::log2(m_elements.size());
 
-    // delete entire SkipLists
-    deleteSkipLists();
+    // delete entire SkipLists -> O(n)
+    int steps_del = deleteSkipList();
+    number_of_steps += steps_del;
 
-    // calculate the new number of lists needed
+    // calculate the new number of lists needed -> O(c)
     m_max_level = calculateNumberOfLists(m_elements.size() + 1);
 
-    m_head = new SkipListNode(-1, m_max_level);
+    m_head = new SkipListNode(-1, m_max_level); // O(c)
 
     // I have to constrcut Lists, since when we need a new level, we need a new list, we need to rebuild entire list   
-    construct();
+    auto [number_of_construction_steps, height] = construct();
+    number_of_steps += number_of_construction_steps;
 
-    return true;
+    return number_of_steps;
 }
 
-bool DetSkipLists::del(int x){
+int DetSkipList::del(int x){
 
-    if(m_elements.find(x) == m_elements.end()){
+    int number_of_steps = 0;
+
+    auto [number_of_finding_steps, node] = find(x);
+
+    if(node == nullptr){
         // Check if x is not in list
         return false;
     }
 
-    // maintain elements for quick checks
+    // maintain elements for constructing later -> binary search tree O(log(n))
     m_elements.erase(x);
+    number_of_steps += std::log2(m_elements.size());
 
-    // delete entire SkipLists
-    deleteSkipLists();
+    // delete entire SkipLists -> O(n)
+    int steps_del = deleteSkipList();
+    number_of_steps += steps_del;
 
     m_max_level = calculateNumberOfLists(m_elements.size() + 1);
 
     m_head = new SkipListNode(-1, m_max_level);
 
-    construct();
+    auto [number_of_construction_steps, height] = construct();
+    number_of_steps += number_of_construction_steps;
 
-    return true;
-
+    return number_of_steps;
 }
 
 

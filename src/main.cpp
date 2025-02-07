@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
             std::cerr << "Error: Could not open det_analysis.csv for writing." << std::endl;
             return 1;
         }
-        detCsvFile << "Round, RunningTimeConstruct, RunningTimeFind, RunningTimeInsert, RunningTimeDelete, n\n"; // CSV Header
+        detCsvFile << "Round, RunningTimeConstruction, RunningTimeFinding, RunningTimeDeleting, RunningTimeInserting, MaxHeight\n"; // CSV Header
     }
 
     for(int i = 0; i < number_of_rounds; i++){
@@ -64,11 +64,25 @@ int main(int argc, char *argv[]) {
         } else{
             rand_element=Utils::getRandomElementNotInSet(S,n);
         } 
-        DetSkipLists detSkipList(S);        
-        auto [number_of_construction_setps, height] = detSkipList.construct();            // Construct the deterministic SkipList
-        detSkipList.find(rand_element);     // Find
-        detSkipList.del(rand_element);      // Delete
-        detSkipList.insert(rand_element);   // Insert
+        DetSkipList detSkipList(S);        
+        auto [number_of_construction_steps, height] = detSkipList.construct();     // Construct the deterministic SkipList
+        auto [number_of_finding_steps, node] = detSkipList.find(rand_element);     // Find
+        int number_of_deleting_steps = detSkipList.del(rand_element);              // Delete
+        int number_of_inserting_steps = detSkipList.insert(rand_element);          // Insert
+
+        if (write_to_file) {
+            detCsvFile << (i + 1) << ","
+                    << number_of_construction_steps << ","
+                    << number_of_finding_steps << ","
+                    << number_of_deleting_steps << ","
+                    << number_of_inserting_steps << ","
+                    << height << "\n";
+        }
+    }
+
+    if (write_to_file) {
+        detCsvFile.close();
+        std::cout << "Results saved to output.csv and config.csv" << std::endl;
     }
 
     return 0;

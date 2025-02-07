@@ -7,14 +7,14 @@
 
 #include "SkipListNode.h"
 
-class DetSkipLists{
+class DetSkipList{
     public:
-        DetSkipLists(std::set<int> S);
+        DetSkipList(std::set<int> S);
 
         void print(void);
-        SkipListNode* find(int x);
-        bool insert(int x);
-        bool del(int x);
+        std::tuple<int,SkipListNode*> find(int x);
+        int insert(int x);
+        int del(int x);
         std::tuple<int,int> construct(void);
 
     private:
@@ -23,7 +23,7 @@ class DetSkipLists{
         int m_max_level;
 
         int calculateNumberOfLists(int n);
-        void deleteSkipLists(void);
+        int deleteSkipList(void);
 };
 
 #endif // DET_SKIP_LISTS_H
