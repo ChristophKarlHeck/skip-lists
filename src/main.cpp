@@ -5,16 +5,6 @@
 #include "RandSkipLists.h"
 #include "utils.h"
 
-// Benchmark a single function
-template <typename SkipListType, typename Func>
-void benchmark(const std::string& label, SkipListType& skipList, Func func, int n) {
-    auto start = std::chrono::high_resolution_clock::now();
-    func(skipList); // Execute the function
-    auto end = std::chrono::high_resolution_clock::now();
-    double duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-    std::cout << label << " with n = " << n << ": " << duration << " us\n";
-}
-
 int main(int argc, char *argv[])
 {
     // Ensure the user provides the required argument
@@ -29,12 +19,7 @@ int main(int argc, char *argv[])
         std::cerr << "Error: The number of elements must be a positive integer." << std::endl;
         return 1;
     }
-
-    // Create the random set
-
-    int lower_bound = 1;
-    int upper_bound = 20;
-   
+  
 
     // for(int i = 0; i < 100000; i++){
     //     std::set<int> S = createRandomSet(n, lower_bound, upper_bound);
@@ -53,13 +38,11 @@ int main(int argc, char *argv[])
     // }
 
     for(int i = 0; i < 100000; i++){
-        std::set<int> S = createRandomSet(n, lower_bound, upper_bound);
+        std::set<int> S = createRandomSet(n);
+        rand_element_from_S = 
         DetSkipLists DetSkipLists(S);
-        DetSkipLists.print();
         DetSkipLists.del(5);
-        DetSkipLists.print();
         DetSkipLists.insert(5);
-        DetSkipLists.print();
     }
 
     // benchmark("RandSkipList Find", RandSkipLists, [&](auto& list) {

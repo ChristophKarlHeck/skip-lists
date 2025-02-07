@@ -3,7 +3,13 @@
 
 #include <set>
 
-// Function to create a random set with n unique numbers in the range [lower, upper]
-std::set<int> createRandomSet(int n, int lower = 1, int upper = 100);
+class Utils {
+public:
+    // Function to create a random set with n unique numbers
+    static std::set<int> createRandomSet(int n);
+
+    // Function to get a random element from a given set
+    static int getRandomElement(const std::set<int>& S);
+};
 
 #endif // UTILS_H
