@@ -228,7 +228,7 @@ std::tuple<int,std::vector<std::pair<SkipListNode*, int>>> RandSkipList::getInse
     SkipListNode* current_node = m_head;
 
     //std::cout << "down from level: "<< max_level << std::endl;
-    for (int level = new_node->getNext().size()-1; level >= 0; level--) {
+    for (int level = m_max_level-1; level >= 0; level--) {
         number_of_steps++;
         // Go level down if current_value < x && (next_value == nullptr || next_value > x)
         if(  current_node->getValue() < new_node->getValue() && 
