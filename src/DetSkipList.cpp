@@ -4,7 +4,7 @@
 #include <algorithm> // For std::lower_bound
 #include <tuple>  // For std::tuple
 
-#include "DetSkipLists.h"
+#include "DetSkipList.h"
 
 int DetSkipList::calculateNumberOfLists(int n){
     
@@ -121,15 +121,20 @@ std::tuple<int,SkipListNode*> DetSkipList::find(int x){
     int number_of_steps = 0; // runtime analysis
 
     SkipListNode* current_node = m_head;
-    for (int level = m_max_level; level >= 0; level--) {
+    for (int level = m_max_level-1; level >= 0; level--) {
         number_of_steps++;
         if(current_node->getNext()[level] == nullptr || current_node->getNext()[level]->getValue() > x){
             std::cout << "down from level: "<< level << std::endl;
+            if(level==0){
+                std::cout << "NOT FOUND" << std::endl;
+                break;
+            }
             continue;
         }
         else{
             std::cout << "next element in level: " << level << std::endl;
             if (current_node->getNext()[level] != nullptr && current_node->getNext()[level]->getValue() == x){
+                std::cout << "FOUND on level: " << level << std::endl;
                 return std::make_tuple(number_of_steps,current_node->getNext()[level]);
             }
             current_node = current_node->getNext()[level];

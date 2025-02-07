@@ -5,7 +5,7 @@
 #include <string>
 #include <tuple>  // For std::tuple
 
-#include "DetSkipLists.h"
+#include "DetSkipList.h"
 #include "RandSkipLists.h"
 #include "utils.h"
 
@@ -43,8 +43,8 @@ int main(int argc, char *argv[]) {
         }
 
         // Write n and log(n) only once
-        configFile << "NumberOfElementsInSet, Log2N\n";
-        configFile << n << "," << std::log2(n) << "\n";
+        configFile << "Log2N, N, Nlog2N, n²  \n";
+        configFile << std::log2(n) << "," << n << "," << n * std::log2(n) << "," << n*n << "\n";
         configFile.close();
 
 
@@ -66,9 +66,16 @@ int main(int argc, char *argv[]) {
         } 
         DetSkipList detSkipList(S);        
         auto [number_of_construction_steps, height] = detSkipList.construct();     // Construct the deterministic SkipList
+        // detSkipList.print();
+        // std::cout << "TASK: Find(" << rand_element << ")" <<std::endl;
         auto [number_of_finding_steps, node] = detSkipList.find(rand_element);     // Find
+        //detSkipList.print();
+        // std::cout << "TASK: Delete(" << rand_element << ")" <<std::endl;
         int number_of_deleting_steps = detSkipList.del(rand_element);              // Delete
+        // detSkipList.print();
+        //std::cout << "TASK: Insert(" << rand_element << ")" <<std::endl;
         int number_of_inserting_steps = detSkipList.insert(rand_element);          // Insert
+        // detSkipList.print();
 
         if (write_to_file) {
             detCsvFile << (i + 1) << ","
