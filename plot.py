@@ -21,79 +21,64 @@ log_n = config_df.iloc[0]["Log2N"]
 n = config_df.iloc[0]["N"]
 n_log_n = config_df.iloc[0]["Nlog2N"]
 
-# Extract rounds and running times from det_analysis
-rounds = det_analysis_df["Round"]
-construction_time = det_analysis_df["RunningTimeConstruction"]
-finding_time = det_analysis_df["RunningTimeFinding"]
-deleting_time = det_analysis_df["RunningTimeDeleting"]
-inserting_time = det_analysis_df["RunningTimeInserting"]
+# Extract rounds and running times from deterministic analysis
+rounds_det = det_analysis_df["Round"]
+construction_time_det = det_analysis_df["RunningTimeConstruction"]
+finding_time_det = det_analysis_df["RunningTimeFinding"]
+deleting_time_det = det_analysis_df["RunningTimeDeleting"]
+inserting_time_det = det_analysis_df["RunningTimeInserting"]
 
-# Create the plot
-plt.figure(figsize=(10, 6))
+# Extract rounds and running times from randomized analysis
+rounds_rand = rand_analysis_df["Round"]
+construction_time_rand = rand_analysis_df["RunningTimeConstruction"]
+finding_time_rand = rand_analysis_df["RunningTimeFinding"]
+deleting_time_rand = rand_analysis_df["RunningTimeDeleting"]
+inserting_time_rand = rand_analysis_df["RunningTimeInserting"]
+max_height_rand = rand_analysis_df["MaxHeight"]
 
-# Plot theoretical complexity lines as fine dotted black lines
-plt.plot(rounds, [log_n] * len(rounds), color="black", linestyle="dotted", linewidth=1)
-plt.plot(rounds, [n] * len(rounds), color="black", linestyle="dotted", linewidth=1)
-plt.plot(rounds, [n_log_n] * len(rounds), color="black", linestyle="dotted", linewidth=1)
-plt.plot(rounds, [2*n_log_n] * len(rounds), color="black", linestyle="dotted", linewidth=1)
+# Create a figure with two subplots
+fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(10, 12))
 
-# Plot benchmark running times as fine slopes
-plt.plot(rounds, construction_time, label="Construction Time", linestyle="-", linewidth=1)
-plt.plot(rounds, finding_time, label="Finding Time", linestyle="-", linewidth=1)
-plt.plot(rounds, deleting_time, label="Deleting Time", linestyle="-", linewidth=1)
-plt.plot(rounds, inserting_time, label="Inserting Time", linestyle="-", linewidth=1)
+# First subplot - Deterministic Skip List
+axes[0].plot(rounds_det, [log_n] * len(rounds_det), color="black", linestyle="dotted", linewidth=1)
+axes[0].plot(rounds_det, [n] * len(rounds_det), color="black", linestyle="dotted", linewidth=1)
+axes[0].plot(rounds_det, [n_log_n] * len(rounds_det), color="black", linestyle="dotted", linewidth=1)
+axes[0].plot(rounds_det, [2*n_log_n] * len(rounds_det), color="black", linestyle="dotted", linewidth=1)
 
-# Labels and title
-plt.xlabel("Rounds")
-plt.ylabel("Running Time")
-plt.title(f"Benchmarking Running Times of Deterministic Skip List (n = {int(n)})")
+axes[0].plot(rounds_det, construction_time_det, label="Construction Time", linestyle="-", linewidth=1)
+axes[0].plot(rounds_det, finding_time_det, label="Finding Time", linestyle="-", linewidth=1)
+axes[0].plot(rounds_det, deleting_time_det, label="Deleting Time", linestyle="-", linewidth=1)
+axes[0].plot(rounds_det, inserting_time_det, label="Inserting Time", linestyle="-", linewidth=1)
 
-# Set custom y-ticks with labels at the corresponding positions
-plt.yticks([log_n, n, n_log_n, 2*n_log_n], ["log(n)", "n", "n log(n)", "2(n log(n))"])
+axes[0].set_xlabel("Rounds")
+axes[0].set_ylabel("Running Time")
+axes[0].set_title(f"Deterministic Skip List (n = {int(n)})")
+axes[0].set_yticks([log_n, n, n_log_n, 2*n_log_n])
+axes[0].set_yticklabels(["log(n)", "n", "n log(n)", "2(n log(n))"])
+axes[0].legend()
+axes[0].grid(True, axis="x", linestyle="dotted", linewidth=0.5)
 
-# Add legend and grid for clarity
-plt.legend()
-plt.grid(True, axis="x", linestyle="dotted", linewidth=0.5)
+# Second subplot - Randomized Skip List
+axes[1].plot(rounds_rand, [log_n] * len(rounds_rand), color="black", linestyle="dotted", linewidth=1)
+axes[1].plot(rounds_rand, [2*log_n] * len(rounds_rand), color="black", linestyle="dotted", linewidth=1)
+axes[1].plot(rounds_rand, [n] * len(rounds_rand), color="black", linestyle="dotted", linewidth=1)
+axes[1].plot(rounds_rand, [n_log_n] * len(rounds_rand), color="black", linestyle="dotted", linewidth=1)
+axes[1].plot(rounds_rand, [2*n_log_n] * len(rounds_rand), color="black", linestyle="dotted", linewidth=1)
 
-# Show plot
-plt.show()
+axes[1].plot(rounds_rand, construction_time_rand, label="Construction Time", linestyle="-", linewidth=1)
+axes[1].plot(rounds_rand, finding_time_rand, label="Finding Time", linestyle="-", linewidth=1)
+axes[1].plot(rounds_rand, deleting_time_rand, label="Deleting Time", linestyle="-", linewidth=1)
+axes[1].plot(rounds_rand, inserting_time_rand, label="Inserting Time", linestyle="-", linewidth=1)
+axes[1].plot(rounds_rand, max_height_rand, label="Max Height", linestyle="-", linewidth=1)
 
-# Extract rounds and running times from det_analysis
-rounds = rand_analysis_df["Round"]
-construction_time = rand_analysis_df["RunningTimeConstruction"]
-finding_time = rand_analysis_df["RunningTimeFinding"]
-deleting_time = rand_analysis_df["RunningTimeDeleting"]
-inserting_time = rand_analysis_df["RunningTimeInserting"]
-max_height = rand_analysis_df["MaxHeight"]
+axes[1].set_xlabel("Rounds")
+axes[1].set_ylabel("Running Time")
+axes[1].set_title(f"Randomized Skip List (n = {int(n)})")
+axes[1].set_yticks([log_n, 2*log_n, n, n_log_n, 2*n_log_n])
+axes[1].set_yticklabels(["log(n)", "2log(n)", "n", "n log(n)", "2(n log(n))"])
+axes[1].legend()
+axes[1].grid(True, axis="x", linestyle="dotted", linewidth=0.5)
 
-# Create the plot
-plt.figure(figsize=(10, 6))
-
-# Plot theoretical complexity lines as fine dotted black lines
-plt.plot(rounds, [log_n] * len(rounds), color="black", linestyle="dotted", linewidth=1)
-plt.plot(rounds, [2*log_n] * len(rounds), color="black", linestyle="dotted", linewidth=1)
-plt.plot(rounds, [n] * len(rounds), color="black", linestyle="dotted", linewidth=1)
-plt.plot(rounds, [n_log_n] * len(rounds), color="black", linestyle="dotted", linewidth=1)
-plt.plot(rounds, [2*n_log_n] * len(rounds), color="black", linestyle="dotted", linewidth=1)
-
-# Plot benchmark running times as fine slopes
-plt.plot(rounds, construction_time, label="Construction Time", linestyle="-", linewidth=1)
-plt.plot(rounds, finding_time, label="Finding Time", linestyle="-", linewidth=1)
-plt.plot(rounds, deleting_time, label="Deleting Time", linestyle="-", linewidth=1)
-plt.plot(rounds, inserting_time, label="Inserting Time", linestyle="-", linewidth=1)
-plt.plot(rounds, max_height, label="Max Height", linestyle="-", linewidth=1)
-
-# Labels and title
-plt.xlabel("Rounds")
-plt.ylabel("Running Time")
-plt.title(f"Benchmarking Running Times of Deterministic Skip List (n = {int(n)})")
-
-# Set custom y-ticks with labels at the corresponding positions
-plt.yticks([log_n, 2*log_n, n, n_log_n, 2*n_log_n], ["log(n)", "2log(n)", "n", "n log(n)", "2(n log(n))"])
-
-# Add legend and grid for clarity
-plt.legend()
-plt.grid(True, axis="x", linestyle="dotted", linewidth=0.5)
-
-# Show plot
+# Adjust layout and show the plot
+plt.tight_layout()
 plt.show()
