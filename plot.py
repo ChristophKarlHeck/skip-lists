@@ -81,4 +81,6 @@ axes[1].grid(True, axis="x", linestyle="dotted", linewidth=0.5)
 
 # Adjust layout and show the plot
 plt.tight_layout()
+plot_filename = "skip_list_analysis.png"
+plt.savefig(plot_filename)
 plt.show()

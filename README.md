@@ -7,6 +7,9 @@
 ```python
 python3 plot.py
 ```
+
+![Benchmark](skip_list_analysis.png)
+
 # SkipLists: A Randomized Search Data Structure
 
 ## Why Use randomized SkipLists?
