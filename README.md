@@ -1,7 +1,19 @@
 # Benchmarking Randomized SkipLists vs Deterministic SkipLists
 
 ```bash
-./build/SkipLists 1000 100 true
+mkdir -p build && cd build
+```
+
+```bash
+cmake ..
+```
+
+```bash
+make 
+```
+
+```bash
+./SkipLists 1000 100 true
 ```
 
 ```python
