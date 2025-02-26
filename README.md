@@ -47,7 +47,7 @@ Deterministic search data structures, such as AVL trees, have predictable but so
 1. **Sort elements and create the base list**.
 2. **For each element, flip a fair coin** until it lands on heads; the number of tails determines the number of additional lists.
 3. **Connect each list by the respective pointers**
-The construction is a Monte Carlo Algorithm since failure if randomized SkipList is higher than \bigmc\ast{log}_2n, success is otherwise. Therefore, we analyze E(H) and P(success).
+The construction is a Monte Carlo Algorithm since failure if randomized SkipList is higher than `log n`, success otherwise. Therefore, we analyze E(H) and P(success).
 
 ### Search Algorithm
 1. Start in the highest list.
@@ -61,6 +61,6 @@ With high probability since the height of the list is in O(log n) whp.
 
 ## Complexity Analysis
 - **Expected height**: `O(log n)`.
-- **Search time**: `O(log n),` as elements move up every two steps on average.
+- **Search time**: `O(log n),` as constant amount of operations on every list --> `c * log n`
 - **Insertion/Deletion**: `O(log n)` due to the self-balancing nature of the structure. The data structure has the same properties as before Insertion/Deletion.
 
