@@ -32,7 +32,7 @@ Deterministic search data structures, such as AVL trees, have predictable but so
 1. **Structure**: SkipLists maintain a hierarchy of linked lists, where each higher-level list "skips" over more elements.
 2. **Search**: Starts at the highest list and moves downward when an element more significant than the target is encountered.
 3. **Worst-case search time**: `O(log n)` due to the logarithmic number of lists.
-4. **Insertion and Deletion**: `O(n)` because of the need for restructuring without sorting.
+4. **Insertion and Deletion**: `O(n)` because of rearranging without sorting.
 
 ### Randomized SkipLists
 1. **Randomization Strategy**:
