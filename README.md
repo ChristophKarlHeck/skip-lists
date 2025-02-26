@@ -25,7 +25,7 @@ python3 plot.py
 # SkipLists: A Randomized Search Data Structure
 
 ## Why Use randomized SkipLists?
-Deterministic search data structures, such as AVL trees, have predictable but sometimes inefficient behaviors regarding space and maintenance. Randomized SkipLists introduce probabilistic balancing, reducing insertion and deletion complexity while maintaining an efficient search performance.
+Deterministic search data structures, such as AVL trees, have predictable but sometimes inefficient behaviors regarding space and sophisticated rebalancing. Randomized SkipLists introduce probabilistic balancing, reducing insertion and deletion complexity while maintaining an efficient search performance.
 
 ## Key Concepts
 ### Deterministic SkipLists
